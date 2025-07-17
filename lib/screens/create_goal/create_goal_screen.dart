@@ -1,3 +1,4 @@
+import 'package:app_p_134/core/constants/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -64,11 +65,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               // Header with Cancel and Done buttons
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.white,
-                  border: Border(
-                    bottom: BorderSide(color: AppColors.gray.withOpacity(0.3), width: 0.5),
-                  ),
+            
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,7 +78,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       child: Text(
                         'Cancel',
                         style: AppTextStyles.header16.copyWith(
-                          color: AppColors.gren,
+                            fontWeight: FontWeight.w600,
+                          color: AppColors.blue
                         ),
                       ),
                     ),
@@ -112,7 +112,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       child: Text(
                         'Done',
                         style: AppTextStyles.header16.copyWith(
-                          color: AppColors.gren,
+                          color: AppColors.blue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -164,11 +164,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               // Header with Cancel and Done buttons
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.white,
-                  border: Border(
-                    bottom: BorderSide(color: AppColors.gray.withOpacity(0.3), width: 0.5),
-                  ),
+              
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,7 +177,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       child: Text(
                         'Cancel',
                         style: AppTextStyles.header16.copyWith(
-                          color: AppColors.gren,
+                            fontWeight: FontWeight.w600,
+                          color: AppColors.blue
                         ),
                       ),
                     ),
@@ -208,8 +207,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       child: Text(
                         'Done',
                         style: AppTextStyles.header16.copyWith(
-                          color: AppColors.gren,
+                          color: AppColors.blue,
                           fontWeight: FontWeight.w600,
+
                         ),
                       ),
                     ),
@@ -263,7 +263,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               SizedBox(height: 16.h),
               Text(
                 'If you exit, you\'ll lose any unsaved work.',
-                style: AppTextStyles.header14.copyWith(
+                style: AppTextStyles.header16.copyWith(
                   color: AppColors.black,
                 ),
                 textAlign: TextAlign.center,
@@ -275,7 +275,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     child: AppButton(
                       text: 'Cancel',
                       onTap: () => Navigator.of(context).pop(),
-                      containerColor: AppColors.lightGray,
+                      containerColor: AppColors.white,
                       fontColor: AppColors.black,
                       height: 45.h,
                     ),
@@ -450,11 +450,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                         ),
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.calendar_today, 
-                              color: AppColors.gray,
-                              size: 20.sp,
-                            ),
+                            Image.asset(Assets.imagesDate),
                             SizedBox(width: 12.w),
                             Text(
                               _selectedDate != null ? _formatDate(_selectedDate!) : 'Select date',
@@ -480,12 +476,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                           borderRadius: BorderRadius.circular(25.r),
                         ),
                         child: Row(
-                          children: [
-                            Icon(
-                              Icons.access_time, 
-                              color: AppColors.gray,
-                              size: 20.sp,
-                            ),
+                          children: [ 
+                         Image.asset(
+                          Assets.imagesTime,),
                             SizedBox(width: 12.w),
                             Text(
                               _selectedTime != null ? _formatTime(_selectedTime!) : 'Select time',
@@ -508,8 +501,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       // Save goal logic here
                       Navigator.of(context).pop();
                     } : null,
-                    containerColor: _isFormValid ? AppColors.gren : AppColors.lightGray,
-                    fontColor: AppColors.black,
+                    containerColor: _isFormValid ? AppColors.gren : AppColors.white,
+                    fontColor:_isFormValid ? AppColors.black : AppColors.gray,
+                    borderColor:_isFormValid ?null: AppColors.gray,
                     width: double.infinity,
                     height: 60.h,
                   ),

@@ -14,7 +14,8 @@ class AppColors {
   static const Color irisPurple = Color(0xff6E45C0);
   static const Color darkPurple = Color(0xff1E1240);
   static const Color gray = Color(0xffAFAEAE);
- 
+  static const Color blue = Color(0xff007AFF);
+  
   static const LinearGradient purpleGradient = LinearGradient(
             colors: [
               AppColors.lavenderPurple,

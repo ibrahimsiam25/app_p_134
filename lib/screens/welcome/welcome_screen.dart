@@ -37,6 +37,7 @@ class WelcomeScreen extends StatelessWidget {
             AppButton(
               margin: 26,
               width: double.infinity,
+              containerColor: AppColors.gren,
               text: 'Begin',
               onTap: () {
                 LocalData.prefs.setBool('isFirstLaunch', true);
