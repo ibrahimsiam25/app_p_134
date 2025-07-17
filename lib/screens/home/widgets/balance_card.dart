@@ -53,7 +53,7 @@ class BalanceCard extends StatelessWidget {
                   // Create a goal button
                   GestureDetector(
                     onTap: () {
-                      // Navigate to create goal screen
+                      Navigator.pushNamed(context, 'createGoalScreen');
                     },
                     child: Container(
                       padding: const EdgeInsets.all(6),

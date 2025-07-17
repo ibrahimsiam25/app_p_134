@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../screens/create_goal/create_goal_screen.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/preloader/preloader_screen.dart';
 import '../../screens/settings/settings_screen.dart';
@@ -11,5 +12,6 @@ class AppRoute {
     'welcomeScreen': (context) => const WelcomeScreen(),
     'homeScreen': (context) => const HomeScreen(),
     'settingsScreen': (context) => const SettingsScreen(),
+    'createGoalScreen': (context) => const CreateGoalScreen(),
   };
 }
