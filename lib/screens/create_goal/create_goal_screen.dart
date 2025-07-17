@@ -17,13 +17,13 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
   final TextEditingController _goalAmountController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  bool _isDeadlineSet = false; // غير مفعل افتراضياً
+  bool _isDeadlineSet = false; 
 
   final FocusNode _focusNode = FocusNode();
   
   bool get _isFormValid => 
     _goalAmountController.text.isNotEmpty && 
-    (!_isDeadlineSet || (_selectedDate != null && _selectedTime != null));
+    ( _selectedDate != null && _selectedTime != null);
 
   bool get _hasUnsavedData => 
     _goalAmountController.text.isNotEmpty || 
@@ -103,10 +103,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                         }
                         Navigator.of(context).pop();
                         
-                        // إظهار time picker تلقائياً بعد اختيار التاريخ
-                        Future.delayed(Duration(milliseconds: 300), () {
-                          _showTimePicker();
-                        });
+                      
+                        // Future.delayed(Duration(milliseconds: 300), () {
+                        //   _showTimePicker();
+                        // });
                       },
                       child: Text(
                         'Done',
@@ -121,18 +121,16 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               ),
               // Date Picker without selection lines
               Expanded(
-                child: Container(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: initialDate,
-                    minimumDate: today,
-                    maximumDate: DateTime(2030),
-                    onDateTimeChanged: (DateTime newDate) {
-                      setState(() {
-                        _selectedDate = newDate;
-                      });
-                    },
-                  ),
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: initialDate,
+                  minimumDate: today,
+                  maximumDate: DateTime(2030),
+                  onDateTimeChanged: (DateTime newDate) {
+                    setState(() {
+                      _selectedDate = newDate;
+                    });
+                  },
                 ),
               ),
             ],
@@ -338,7 +336,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
             fontFamily: AppTextStyles.fontMontserrat,
             fontSize: 24.sp,
             fontWeight: FontWeight.w600,
-            color: AppColors.black,
+            color: AppColors.blackLight,
           ),
         ),
         centerTitle: true,
@@ -372,7 +370,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     child: TextField(
                       controller: _goalAmountController,
                       focusNode: _focusNode,
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       style: AppTextStyles.header16.copyWith(color: AppColors.black),
                       onChanged: (value) {
                         setState(() {});
@@ -412,10 +410,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                           setState(() {
                             _isDeadlineSet = value ?? false;
                             if (_isDeadlineSet) {
-                              // عندما يتم تفعيل الـ checkbox، اظهار date picker
-                              Future.delayed(Duration(milliseconds: 100), () {
-                                _showDatePicker();
-                              });
+                              // // عندما يتم تفعيل الـ checkbox، اظهار date picker
+                              // Future.delayed(Duration(milliseconds: 100), () {
+                              //   _showDatePicker();
+                              // });
                             } else {
                               // عندما يتم إلغاء تفعيل الـ checkbox، امسح التاريخ والوقت
                               _selectedDate = null;
