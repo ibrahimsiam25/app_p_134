@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_images.dart';
+import '../../core/constants/asstes.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/database/local_date.dart';
 import '../../widgets/app_button.dart';
@@ -13,14 +13,7 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.lavenderPurple,
-              AppColors.royalPurple,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+          gradient: AppColors.purpleGradient,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

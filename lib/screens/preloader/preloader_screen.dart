@@ -34,14 +34,7 @@ class _PreloaderScreenState extends State<PreloaderScreen> {
     return Scaffold(
         body: Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.lavenderPurple,
-            AppColors.royalPurple,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        gradient: AppColors.purpleGradient,
       ),
       child: Center(
         child: Column(

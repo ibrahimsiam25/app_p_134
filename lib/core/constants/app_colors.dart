@@ -10,4 +10,12 @@ class AppColors {
   static const Color lavenderPurple = Color(0xff9163F6);
   static const Color royalPurple = Color(0xff673BC3);
   static const Color irisPurple = Color(0xff6E45C0);
+  static const LinearGradient purpleGradient = LinearGradient(
+            colors: [
+              AppColors.lavenderPurple,
+              AppColors.royalPurple,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ) ;
 }
