@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
@@ -217,20 +218,18 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               ),
               // Time Picker without selection lines
               Expanded(
-                child: Container(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
-                    initialDateTime: initialDateTime,
-                    use24hFormat: true,
-                    onDateTimeChanged: (DateTime newDateTime) {
-                      setState(() {
-                        _selectedTime = TimeOfDay(
-                          hour: newDateTime.hour,
-                          minute: newDateTime.minute,
-                        );
-                      });
-                    },
-                  ),
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.time,
+                  initialDateTime: initialDateTime,
+                  use24hFormat: true,
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    setState(() {
+                      _selectedTime = TimeOfDay(
+                        hour: newDateTime.hour,
+                        minute: newDateTime.minute,
+                      );
+                    });
+                  },
                 ),
               ),
             ],
@@ -372,6 +371,11 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       focusNode: _focusNode,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       style: AppTextStyles.header16.copyWith(color: AppColors.black),
+                      maxLength: 6,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(6),
+                      ],
                       onChanged: (value) {
                         setState(() {});
                       },
@@ -391,6 +395,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                           minHeight: 20.h,
                         ),
                         border: InputBorder.none,
+                        counterText: '', // إخفاء عداد الأحرف
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 16.w,
                           vertical: 16.h,
