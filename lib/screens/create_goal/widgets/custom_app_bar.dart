@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final VoidCallback onBackPressed;
+
+  const CustomAppBar({
+    Key? key,
+    required this.title,
+    required this.onBackPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: AppColors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios, color: AppColors.black),
+        onPressed: onBackPressed,
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontFamily: AppTextStyles.fontMontserrat,
+          fontSize: 24.sp,
+          fontWeight: FontWeight.w600,
+          color: AppColors.blackLight,
+        ),
+      ),
+      centerTitle: true,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
