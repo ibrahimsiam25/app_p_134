@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
@@ -16,13 +17,14 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
   final TextEditingController _goalAmountController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  bool _isDeadlineSet = false;
+  bool _isDeadlineSet = true; // مفعل افتراضياً
 
   final FocusNode _focusNode = FocusNode();
   
   bool get _isFormValid => 
     _goalAmountController.text.isNotEmpty && 
-    (!_isDeadlineSet || (_selectedDate != null && _selectedTime != null));
+    _selectedDate != null && 
+    _selectedTime != null;
 
   bool get _hasUnsavedData => 
     _goalAmountController.text.isNotEmpty || 
@@ -37,57 +39,188 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
   }
 
   void _showDatePicker() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2030),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.gren,
-              onPrimary: AppColors.white,
-              surface: AppColors.white,
-              onSurface: AppColors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    DateTime initialDate = _selectedDate ?? today;
     
-    if (pickedDate != null) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
+    // Ensure initial date is not before today
+    if (initialDate.isBefore(today)) {
+      initialDate = today;
     }
+    
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Container(
+        height: 300.h,
+        padding: EdgeInsets.only(top: 6.h),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              // Header with Cancel and Done buttons
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  border: Border(
+                    bottom: BorderSide(color: AppColors.gray.withOpacity(0.3), width: 0.5),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Cancel',
+                        style: AppTextStyles.header16.copyWith(
+                          color: AppColors.gren,
+                        ),
+                      ),
+                    ),
+               
+                       Text(
+                        'Select Date',
+                        style: AppTextStyles.header16.copyWith(
+                          color: AppColors.black,
+                          fontWeight: FontWeight.w600,
+                           decoration: TextDecoration.none, 
+                        ),
+                      ),
+                   
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Done',
+                        style: AppTextStyles.header16.copyWith(
+                          color: AppColors.gren,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Date Picker without selection lines
+              Expanded(
+                child: Container(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: initialDate,
+                    minimumDate: today,
+                    maximumDate: DateTime(2030),
+                    onDateTimeChanged: (DateTime newDate) {
+                      setState(() {
+                        _selectedDate = newDate;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void _showTimePicker() async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.gren,
-              onPrimary: AppColors.white,
-              surface: AppColors.white,
-              onSurface: AppColors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
+    TimeOfDay initialTime = _selectedTime ?? TimeOfDay.now();
+    DateTime initialDateTime = DateTime.now().copyWith(
+      hour: initialTime.hour,
+      minute: initialTime.minute,
     );
     
-    if (pickedTime != null) {
-      setState(() {
-        _selectedTime = pickedTime;
-      });
-    }
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Container(
+        height: 300.h,
+        padding: EdgeInsets.only(top: 6.h),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              // Header with Cancel and Done buttons
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  border: Border(
+                    bottom: BorderSide(color: AppColors.gray.withOpacity(0.3), width: 0.5),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Cancel',
+                        style: AppTextStyles.header16.copyWith(
+                          color: AppColors.gren,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Select Time',
+                      style: AppTextStyles.header16.copyWith(
+                        color: AppColors.black,
+                        fontWeight: FontWeight.w600,
+                           decoration: TextDecoration.none, 
+                      ),
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Done',
+                        style: AppTextStyles.header16.copyWith(
+                          color: AppColors.gren,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Time Picker without selection lines
+              Expanded(
+                child: Container(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.time,
+                    initialDateTime: initialDateTime,
+                    use24hFormat: true,
+                    onDateTimeChanged: (DateTime newDateTime) {
+                      setState(() {
+                        _selectedTime = TimeOfDay(
+                          hour: newDateTime.hour,
+                          minute: newDateTime.minute,
+                        );
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void _showExitDialog() {
@@ -256,15 +389,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     children: [
                       Checkbox(
                         value: _isDeadlineSet,
-                        onChanged: (value) {
-                          setState(() {
-                            _isDeadlineSet = value ?? false;
-                            if (!_isDeadlineSet) {
-                              _selectedDate = null;
-                              _selectedTime = null;
-                            }
-                          });
-                        },
+                        onChanged: null, // غير قابل للتعديل
                         activeColor: AppColors.gren,
                       ),
                       Text(
@@ -274,61 +399,67 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     ],
                   ),
                   
-                  if (_isDeadlineSet) ...[
-                    SizedBox(height: 16.h),
-                    
-                    // Date Selection
-                    GestureDetector(
-                      onTap: _showDatePicker,
-                      child: Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: const Color(0xffFDFCFD),
-                          border: Border.all(color: AppColors.gray),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.calendar_today, color: AppColors.gray),
-                            SizedBox(width: 12.w),
-                            Text(
-                              _selectedDate != null ? _formatDate(_selectedDate!) : 'Select date',
-                              style: AppTextStyles.header16.copyWith(
-                                color: _selectedDate != null ? AppColors.black : AppColors.gray,
-                              ),
+                  SizedBox(height: 16.h),
+                  
+                  // Date Selection
+                  GestureDetector(
+                    onTap: _showDatePicker,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffFDFCFD),
+                        border: Border.all(color: AppColors.gray),
+                        borderRadius: BorderRadius.circular(25.r),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today, 
+                            color: AppColors.gray,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Text(
+                            _selectedDate != null ? _formatDate(_selectedDate!) : 'Select date',
+                            style: AppTextStyles.header16.copyWith(
+                              color: _selectedDate != null ? AppColors.black : AppColors.gray,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    
-                    SizedBox(height: 16.h),
-                    
-                    // Time Selection
-                    GestureDetector(
-                      onTap: _showTimePicker,
-                      child: Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: const Color(0xffFDFCFD),
-                          border: Border.all(color: AppColors.gray),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.access_time, color: AppColors.gray),
-                            SizedBox(width: 12.w),
-                            Text(
-                              _selectedTime != null ? _formatTime(_selectedTime!) : 'Select time',
-                              style: AppTextStyles.header16.copyWith(
-                                color: _selectedTime != null ? AppColors.black : AppColors.gray,
-                              ),
+                  ),
+                  
+                  SizedBox(height: 16.h),
+                  
+                  // Time Selection
+                  GestureDetector(
+                    onTap: _showTimePicker,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffFDFCFD),
+                        border: Border.all(color: AppColors.gray),
+                        borderRadius: BorderRadius.circular(25.r),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.access_time, 
+                            color: AppColors.gray,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Text(
+                            _selectedTime != null ? _formatTime(_selectedTime!) : 'Select time',
+                            style: AppTextStyles.header16.copyWith(
+                              color: _selectedTime != null ? AppColors.black : AppColors.gray,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                   
                   const Spacer(),
                   
