@@ -31,12 +31,15 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
     
-    // If no date is selected, start with today's date
-    // Otherwise, use the selected date as is (no restrictions)
+    // القيمة الابتدائية دائماً هي تاريخ اليوم
+    // أو التاريخ المختار إذا كان بعد اليوم
     if (widget.selectedDate == null) {
       currentSelectedDate = today;
     } else {
-      currentSelectedDate = widget.selectedDate!;
+      // إذا كان التاريخ المختار قبل اليوم، استخدم تاريخ اليوم
+      currentSelectedDate = widget.selectedDate!.isBefore(today) 
+          ? today 
+          : widget.selectedDate!;
     }
     
     // إرسال القيمة الابتدائية للـ parent widget عند فتح الـ picker
@@ -47,6 +50,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    
     return Container(
       height: 300.h,
       padding: EdgeInsets.only(top: 6.h),
@@ -108,8 +114,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
             Expanded(
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
+                minimumDate: today,
                 initialDateTime: currentSelectedDate,
-                maximumDate: DateTime(2030),
                 onDateTimeChanged: (DateTime newDate) {
                   setState(() {
                     currentSelectedDate = newDate;
