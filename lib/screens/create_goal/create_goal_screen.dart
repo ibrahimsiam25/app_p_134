@@ -17,14 +17,13 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
   final TextEditingController _goalAmountController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  bool _isDeadlineSet = true; // مفعل افتراضياً
+  bool _isDeadlineSet = false; // غير مفعل افتراضياً
 
   final FocusNode _focusNode = FocusNode();
   
   bool get _isFormValid => 
     _goalAmountController.text.isNotEmpty && 
-    _selectedDate != null && 
-    _selectedTime != null;
+    (!_isDeadlineSet || (_selectedDate != null && _selectedTime != null));
 
   bool get _hasUnsavedData => 
     _goalAmountController.text.isNotEmpty || 
@@ -96,7 +95,18 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     CupertinoButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
+                        // حفظ القيمة الافتراضية إذا لم يتم اختيار شيء
+                        if (_selectedDate == null) {
+                          setState(() {
+                            _selectedDate = initialDate;
+                          });
+                        }
                         Navigator.of(context).pop();
+                        
+                        // إظهار time picker تلقائياً بعد اختيار التاريخ
+                        Future.delayed(Duration(milliseconds: 300), () {
+                          _showTimePicker();
+                        });
                       },
                       child: Text(
                         'Done',
@@ -185,6 +195,15 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     CupertinoButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
+                        // حفظ القيمة الافتراضية إذا لم يتم اختيار شيء
+                        if (_selectedTime == null) {
+                          setState(() {
+                            _selectedTime = TimeOfDay(
+                              hour: initialDateTime.hour,
+                              minute: initialDateTime.minute,
+                            );
+                          });
+                        }
                         Navigator.of(context).pop();
                       },
                       child: Text(
@@ -389,7 +408,21 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     children: [
                       Checkbox(
                         value: _isDeadlineSet,
-                        onChanged: null, // غير قابل للتعديل
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isDeadlineSet = value ?? false;
+                            if (_isDeadlineSet) {
+                              // عندما يتم تفعيل الـ checkbox، اظهار date picker
+                              Future.delayed(Duration(milliseconds: 100), () {
+                                _showDatePicker();
+                              });
+                            } else {
+                              // عندما يتم إلغاء تفعيل الـ checkbox، امسح التاريخ والوقت
+                              _selectedDate = null;
+                              _selectedTime = null;
+                            }
+                          });
+                        },
                         activeColor: AppColors.gren,
                       ),
                       Text(
@@ -401,65 +434,67 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   
                   SizedBox(height: 16.h),
                   
-                  // Date Selection
-                  GestureDetector(
-                    onTap: _showDatePicker,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                      decoration: BoxDecoration(
-                        color: const Color(0xffFDFCFD),
-                        border: Border.all(color: AppColors.gray),
-                        borderRadius: BorderRadius.circular(25.r),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_today, 
-                            color: AppColors.gray,
-                            size: 20.sp,
-                          ),
-                          SizedBox(width: 12.w),
-                          Text(
-                            _selectedDate != null ? _formatDate(_selectedDate!) : 'Select date',
-                            style: AppTextStyles.header16.copyWith(
-                              color: _selectedDate != null ? AppColors.black : AppColors.gray,
+                  // Date Selection - يظهر فقط عندما يكون الـ checkbox مفعل
+                  if (_isDeadlineSet) ...[
+                    GestureDetector(
+                      onTap: _showDatePicker,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffFDFCFD),
+                          border: Border.all(color: AppColors.gray),
+                          borderRadius: BorderRadius.circular(25.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today, 
+                              color: AppColors.gray,
+                              size: 20.sp,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 12.w),
+                            Text(
+                              _selectedDate != null ? _formatDate(_selectedDate!) : 'Select date',
+                              style: AppTextStyles.header16.copyWith(
+                                color: _selectedDate != null ? AppColors.black : AppColors.gray,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  
-                  SizedBox(height: 16.h),
-                  
-                  // Time Selection
-                  GestureDetector(
-                    onTap: _showTimePicker,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                      decoration: BoxDecoration(
-                        color: const Color(0xffFDFCFD),
-                        border: Border.all(color: AppColors.gray),
-                        borderRadius: BorderRadius.circular(25.r),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.access_time, 
-                            color: AppColors.gray,
-                            size: 20.sp,
-                          ),
-                          SizedBox(width: 12.w),
-                          Text(
-                            _selectedTime != null ? _formatTime(_selectedTime!) : 'Select time',
-                            style: AppTextStyles.header16.copyWith(
-                              color: _selectedTime != null ? AppColors.black : AppColors.gray,
+                    
+                    SizedBox(height: 16.h),
+                    
+                    // Time Selection - يظهر فقط عندما يكون الـ checkbox مفعل
+                    GestureDetector(
+                      onTap: _showTimePicker,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffFDFCFD),
+                          border: Border.all(color: AppColors.gray),
+                          borderRadius: BorderRadius.circular(25.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time, 
+                              color: AppColors.gray,
+                              size: 20.sp,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 12.w),
+                            Text(
+                              _selectedTime != null ? _formatTime(_selectedTime!) : 'Select time',
+                              style: AppTextStyles.header16.copyWith(
+                                color: _selectedTime != null ? AppColors.black : AppColors.gray,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                   
                   const Spacer(),
                   
