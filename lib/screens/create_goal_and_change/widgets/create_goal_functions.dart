@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/database/local_date.dart';
 import '../../../models/goal_model.dart';
 import '../../../widgets/custom_snack_bar.dart';
 import '../../../widgets/coustom_dialog.dart';
+import '../../../cubit/goalCubit/goal_cubit.dart';
 import 'date_picker_widget.dart';
 import 'time_picker_widget.dart';
 
@@ -181,6 +183,11 @@ class CreateGoalFunctions {
       bool success = await LocalData.saveGoal(goal);
       
       if (success) {
+        // Refresh the GoalCubit state
+        if (context.mounted) {
+          context.read<GoalCubit>().refreshState();
+        }
+        
         // Show success message
         CustomSnackBar.show(
           context,

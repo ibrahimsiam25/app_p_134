@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/app_router/app_router.dart';
 import 'core/constants/app_colors.dart';
 import 'cubit/settingsCubit/settings_cubit.dart';
+import 'cubit/goalCubit/goal_cubit.dart';
 
 class Application extends StatelessWidget {
   const Application({super.key});
@@ -14,6 +15,9 @@ class Application extends StatelessWidget {
       providers: [
         BlocProvider<SettingsCubit>(
           create: (BuildContext context) => SettingsCubit(),
+        ),
+        BlocProvider<GoalCubit>(
+          create: (BuildContext context) => GoalCubit(),
         ),
       ],
       child:  ScreenUtilInit(  

@@ -99,6 +99,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
         name: _incomeNameController.text,
         amount: amount,
         date: DateTime.now(),
+        isFromCurrentGoal: (_selectedIncomeType == TransactionType.addToGoal) && _hasGoal,
       );
 
       bool success = false;

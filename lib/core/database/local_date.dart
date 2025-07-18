@@ -226,7 +226,7 @@ class LocalData {
       List<TransactionModel> transactions = await getTransactions();
       double total = 0.0;
       for (var transaction in transactions) {
-        if (transaction.isIncome) {
+        if (transaction.isIncome && transaction.isFromCurrentGoal) {
           total += transaction.amount;
         }
       }
@@ -236,14 +236,14 @@ class LocalData {
       return 0.0;
     }
   }
-
+ 
   // Get total expense amount
   static Future<double> getTotalExpense() async {
     try {
       List<TransactionModel> transactions = await getTransactions();
       double total = 0.0;
-      for (var transaction in transactions) {
-        if (transaction.isExpense) {
+      for (var transaction in transactions ) {  
+        if (transaction.isExpense && transaction.isFromCurrentGoal) {
           total += transaction.amount;
         }
       }
@@ -269,6 +269,7 @@ class LocalData {
 
   // Add income (using unified transaction model)
   static Future<bool> addIncome(TransactionModel income) async {
+    print('Adding income****: ${income.isFromCurrentGoal}');
     return await addTransaction(income);
   }
 

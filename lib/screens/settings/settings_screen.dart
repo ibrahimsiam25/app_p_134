@@ -1,8 +1,10 @@
 import 'package:app_p_134/widgets/coustom_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/database/local_date.dart';
+import '../../cubit/goalCubit/goal_cubit.dart';
 import '../../widgets/custom_back_app_bar.dart';
 import '../../widgets/custom_snack_bar.dart';
 import 'widgets/setting_card.dart';
@@ -77,6 +79,11 @@ class SettingsScreen extends StatelessWidget {
       // Clear all transactions data
       await LocalData.clearAllTransactions();
       
+      // Refresh the GoalCubit state
+      if (context.mounted) {
+        context.read<GoalCubit>().refreshState();
+      }
+      Navigator.of(context).pop(); // Close the settings screen
       CustomSnackBar.show(
         context,
         message: 'All data cleared successfully!',

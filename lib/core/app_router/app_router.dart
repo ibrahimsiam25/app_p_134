@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../screens/add _income_and_expense/add_income_screen.dart';
 import '../../screens/add _income_and_expense/add_expense_screen.dart';
 import '../../screens/create_goal_and_change/create_goal_screen.dart';
+import '../../screens/create_goal_and_change/change_goal_screen.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/home/all_transactions_screen.dart';
 import '../../screens/preloader/preloader_screen.dart';
@@ -15,6 +16,13 @@ class AppRoute {
     'homeScreen': (context) => const HomeScreen(),
     'settingsScreen': (context) => const SettingsScreen(),
     'createGoalScreen': (context) => const CreateGoalScreen(),
+    'changeGoalScreen': (context) {
+      final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+      return ChangeGoalScreen(
+        initialGoalAmount: args?['initialGoalAmount'] ?? 0.0,
+        initialDeadline: args?['initialDeadline'],
+      );
+    },
     'addIncomeScreen': (context) => const AddIncomeScreen(),
     'addExpenseScreen': (context) => const AddExpenseScreen(),
     'allTransactionsScreen': (context) => const AllTransactionsScreen(),

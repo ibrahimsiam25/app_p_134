@@ -93,12 +93,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     });
 
     try {
+     
       final amount = double.parse(_expenseAmountController.text);
       final expense = TransactionModel.expense(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: _expenseNameController.text,
         amount: amount,
         date: DateTime.now(),
+        isFromCurrentGoal: (_selectedExpenseType == TransactionType.addToGoal)&&_hasGoal, 
       );
 
       bool success = false;
