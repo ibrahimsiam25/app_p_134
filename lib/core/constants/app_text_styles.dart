@@ -18,6 +18,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     color: AppColors.lightGray  ,
   );
+ 
   static TextStyle header17 = TextStyle(
     fontFamily: fontMontserrat,
     fontSize: 17.0.sp,

@@ -24,12 +24,7 @@ class TransactionTypeSelector extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontMontserrat,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w400,
-            color: AppColors.blackLight,
-          ),
+          style: AppTextStyles.header16.copyWith(color: AppColors.blackLight),
         ),
         SizedBox(height: 12.h),
         _buildRadioOption(

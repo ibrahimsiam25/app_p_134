@@ -61,12 +61,7 @@ class _TextInputState extends State<TextInput> {
       children: [
         Text(
           widget.title,
-          style: TextStyle(
-            fontFamily: AppTextStyles.fontMontserrat,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w400,
-            color: AppColors.blackLight,
-          ),
+          style: AppTextStyles.header16.copyWith(color: AppColors.blackLight),
         ),
         SizedBox(height: 8.h),
         Container(
