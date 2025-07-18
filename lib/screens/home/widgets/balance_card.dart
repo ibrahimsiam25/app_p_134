@@ -45,7 +45,7 @@ class BalanceCard extends StatelessWidget {
                 children: [
                   // Tree/Plant image in background
                   Image.asset(
-                    Assets.imagesGoalNotAchieved,
+                    Assets.imagesGoalInitalAchieved,
                    height: 136.w,
                    fit: BoxFit.cover,
 

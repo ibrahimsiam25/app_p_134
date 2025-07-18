@@ -18,6 +18,10 @@ class Assets {
   /// assets/images/goal_achieved.png
   static const String imagesGoalAchieved = "assets/images/goal_achieved.png";
 
+  /// Assets for imagesGoalInitalAchieved
+  /// assets/images/goal_inital_achieved.png
+  static const String imagesGoalInitalAchieved = "assets/images/goal_inital_achieved.png";
+
   /// Assets for imagesGoalNotAchieved
   /// assets/images/goal_not_achieved.png
   static const String imagesGoalNotAchieved = "assets/images/goal_not_achieved.png";
