@@ -1,4 +1,6 @@
+import 'package:app_p_134/widgets/app_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/constants/assets.dart';
@@ -104,7 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, 'settingsScreen');
+              
+            
+                        Navigator.pushNamed(context, 'settingsScreen');
                         },
                         child: Container(
                           width: 40,
