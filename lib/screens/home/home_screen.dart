@@ -72,7 +72,7 @@ class HomeScreen extends StatelessWidget {
                 const ActionButtons(),
                 
                 // Transactions Section
-                TransactionsSection(),
+              const  TransactionsSection(),
               ],
             ),
           ),
