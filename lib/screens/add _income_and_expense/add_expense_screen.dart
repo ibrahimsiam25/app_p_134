@@ -72,7 +72,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           title: 'Heads up!',
           message: 'If you exit, you\'ll lose any unsaved work.',
           onCancel: () => Navigator.of(context).pop(),
-          onExit: () {
+          onAction: () {
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           },

@@ -6,15 +6,18 @@ import 'app_button.dart';
 
 class ExitDialog extends StatelessWidget {
   final VoidCallback onCancel;
-  final VoidCallback onExit;
+  final VoidCallback onAction;
+  final String actionLabel;
  final String title;
+
   final String message;
   const ExitDialog({
     super.key,
     required this.onCancel,
-    required this.onExit,
+    required this.onAction,
     required this.title,
     required this.message,
+    this.actionLabel = 'Exit', 
   });
 
   @override
@@ -60,8 +63,8 @@ class ExitDialog extends StatelessWidget {
                 SizedBox(width: 16.w),
                 Expanded(
                   child: AppButton(
-                    text: 'Exit',
-                    onTap: onExit,
+                    text: actionLabel,
+                    onTap: onAction,
                     containerColor: AppColors.gren,
                     fontColor: AppColors.black,
                     height: 45.h,

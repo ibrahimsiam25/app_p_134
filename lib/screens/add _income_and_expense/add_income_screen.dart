@@ -72,7 +72,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
           title: 'Heads up!',
           message: 'If you exit, you\'ll lose any unsaved work.',
           onCancel: () => Navigator.of(context).pop(),
-          onExit: () {
+          onAction: () {
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           },
