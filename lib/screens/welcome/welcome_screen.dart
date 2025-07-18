@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/asstes.dart';
+import '../../../core/constants/assets.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/database/local_date.dart';
 import '../../widgets/app_button.dart';
