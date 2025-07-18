@@ -1,20 +1,48 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/goal_model.dart';
 import '../../models/transaction_model.dart';
 
 class LocalData {
   static late SharedPreferences prefs;
-  static const String _goalKey = 'current_goal'; // Changed from _goalsKey to _goalKey
+  static const String _goalKey = 'current_goal';
+  static const String _transactionsKey = 'transactions';
+  
+  // Stream controller for transactions changes
+  static final StreamController<List<TransactionModel>> _transactionsController = 
+      StreamController<List<TransactionModel>>.broadcast();
+  
+  // Stream to listen to transactions changes
+  static Stream<List<TransactionModel>> get transactionsStream => _transactionsController.stream;
 
   static Future<void> initLocalService() async {
     prefs = await SharedPreferences.getInstance();
+    // Initialize stream with current data
+    await notifyTransactionsChanged();
   }
 
+  // Notify listeners about transactions changes
+  static Future<void> notifyTransactionsChanged() async {
+    try {
+      List<TransactionModel> transactions = await getTransactions();
+      print('LocalData: Notifying ${transactions.length} transactions to stream');
+      _transactionsController.add(transactions);
+    } catch (e) {
+      print('Error notifying transactions changed: $e');
+    }
+  }
+
+  // Dispose stream controller when no longer needed
+  static void dispose() {
+    _transactionsController.close();
+  }
+
+  // Goal Management Methods
+  
   // Save/Update the single goal (replaces any existing goal)
   static Future<bool> saveGoal(GoalModel goal) async {
     try {
-      // Convert goal to JSON string
       String goalJson = jsonEncode(goal.toJson());
       print("Saving goal: $goalJson");
       return await prefs.setString(_goalKey, goalJson);
@@ -54,6 +82,25 @@ class LocalData {
     }
   }
 
+  // Delete the current goal
+  static Future<bool> deleteCurrentGoal() async {
+    try {
+      print("LocalData: Deleting current goal from storage");
+      bool result = await prefs.remove(_goalKey);
+      
+      // Notify listeners about the change (empty transactions list)
+      if (result) {
+        print("LocalData: Goal deleted successfully, notifying listeners");
+        await notifyTransactionsChanged();
+      }
+      
+      return result;
+    } catch (e) {
+      print('Error deleting goal: $e');
+      return false;
+    }
+  }
+
   // Update goal completion status
   static Future<bool> updateGoalCompletion(bool isCompleted) async {
     try {
@@ -88,220 +135,231 @@ class LocalData {
     }
   }
 
-  // Update goal deadline
-  static Future<bool> updateGoalDeadline(DateTime? newDeadline) async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        GoalModel updatedGoal = currentGoal.copyWith(deadline: newDeadline);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
-    } catch (e) {
-      print('Error updating goal deadline: $e');
-      return false;
-    }
-  }
-
-  // Delete the current goal
-  static Future<bool> deleteCurrentGoal() async {
-    try {
-      print("Deleting current goal from storage");
-      return await prefs.remove(_goalKey);
-    } catch (e) {
-      print('Error deleting goal: $e');
-      return false;
-    }
-  }
-
-  // Legacy methods for backward compatibility (deprecated)
-  @deprecated
-  static Future<List<GoalModel>> getGoals() async {
-    GoalModel? goal = await getCurrentGoal();
-    return goal != null ? [goal] : [];
-  }
-
-  @deprecated
-  static Future<GoalModel?> getGoalById(String id) async {
-    GoalModel? goal = await getCurrentGoal();
-    return (goal != null && goal.id == id) ? goal : null;
-  }
-
-  @deprecated
-  static Future<bool> deleteGoal(String id) async {
-    GoalModel? goal = await getCurrentGoal();
-    if (goal != null && goal.id == id) {
-      return await deleteCurrentGoal();
-    }
-    return false;
-  }
-
-  @deprecated
-  static Future<bool> updateGoalCompletionById(String id, bool isCompleted) async {
-    GoalModel? goal = await getCurrentGoal();
-    if (goal != null && goal.id == id) {
-      return await updateGoalCompletion(isCompleted);
-    }
-    return false;
-  }
-
-  @deprecated
-  static Future<bool> clearAllGoals() async {
-    return await deleteCurrentGoal();
-  }
-
-  // Transaction Management Methods
+  // Transaction Management Methods (Independent of Goals)
   
-  // Add transaction to current goal
-  static Future<bool> addTransactionToGoal(TransactionModel transaction) async {
+  // Save transactions list to storage
+  static Future<bool> saveTransactions(List<TransactionModel> transactions) async {
     try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        List<TransactionModel> updatedTransactions = List.from(currentGoal.transactions);
-        updatedTransactions.add(transaction);
-        
-        GoalModel updatedGoal = currentGoal.copyWith(transactions: updatedTransactions);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
+      List<Map<String, dynamic>> transactionsJson = 
+          transactions.map((transaction) => transaction.toJson()).toList();
+      String transactionsString = jsonEncode(transactionsJson);
+      return await prefs.setString(_transactionsKey, transactionsString);
     } catch (e) {
-      print('Error adding transaction to goal: $e');
+      print('Error saving transactions: $e');
       return false;
     }
   }
 
-  // Add income to current goal (using unified transaction model)
+  // Get all transactions from storage
+  static Future<List<TransactionModel>> getTransactions() async {
+    try {
+      String? transactionsString = prefs.getString(_transactionsKey);
+      
+      if (transactionsString == null || transactionsString.isEmpty) {
+        return [];
+      }
+
+      List<dynamic> transactionsJson = jsonDecode(transactionsString);
+      return transactionsJson
+          .map((json) => TransactionModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print('Error getting transactions: $e');
+      return [];
+    }
+  }
+
+  // Add transaction to storage
+  static Future<bool> addTransaction(TransactionModel transaction) async {
+    try {
+      print('LocalData: Adding transaction: ${transaction.name} - ${transaction.amount}');
+      List<TransactionModel> currentTransactions = await getTransactions();
+      currentTransactions.add(transaction);
+      
+      bool result = await saveTransactions(currentTransactions);
+      
+      if (result) {
+        print('LocalData: Transaction saved successfully, notifying listeners');
+        await notifyTransactionsChanged();
+      }
+      
+      return result;
+    } catch (e) {
+      print('Error adding transaction: $e');
+      return false;
+    }
+  }
+
+  // Add income (using unified transaction model)
+  static Future<bool> addIncome(TransactionModel income) async {
+    return await addTransaction(income);
+  }
+
+  // Add expense (using unified transaction model)
+  static Future<bool> addExpense(TransactionModel expense) async {
+    return await addTransaction(expense);
+  }
+
+  // Update transaction in storage
+  static Future<bool> updateTransaction(TransactionModel updatedTransaction) async {
+    try {
+      List<TransactionModel> currentTransactions = await getTransactions();
+      
+      int index = currentTransactions.indexWhere((t) => t.id == updatedTransaction.id);
+      if (index != -1) {
+        currentTransactions[index] = updatedTransaction;
+        bool result = await saveTransactions(currentTransactions);
+        
+        if (result) {
+          await notifyTransactionsChanged();
+        }
+        
+        return result;
+      }
+      
+      return false;
+    } catch (e) {
+      print('Error updating transaction: $e');
+      return false;
+    }
+  }
+
+  // Remove transaction from storage
+  static Future<bool> removeTransaction(String transactionId) async {
+    try {
+      List<TransactionModel> currentTransactions = await getTransactions();
+      
+      currentTransactions.removeWhere((t) => t.id == transactionId);
+      bool result = await saveTransactions(currentTransactions);
+      
+      if (result) {
+        await notifyTransactionsChanged();
+      }
+      
+      return result;
+    } catch (e) {
+      print('Error removing transaction: $e');
+      return false;
+    }
+  }
+
+  // Clear all transactions
+  static Future<bool> clearAllTransactions() async {
+    try {
+      bool result = await prefs.remove(_transactionsKey);
+      
+      if (result) {
+        await notifyTransactionsChanged();
+      }
+      
+      return result;
+    } catch (e) {
+      print('Error clearing transactions: $e');
+      return false;
+    }
+  }
+
+  // Get total income amount
+  static Future<double> getTotalIncome() async {
+    try {
+      List<TransactionModel> transactions = await getTransactions();
+      double total = 0.0;
+      for (var transaction in transactions) {
+        if (transaction.isIncome) {
+          total += transaction.amount;
+        }
+      }
+      return total;
+    } catch (e) {
+      print('Error calculating total income: $e');
+      return 0.0;
+    }
+  }
+
+  // Get total expense amount
+  static Future<double> getTotalExpense() async {
+    try {
+      List<TransactionModel> transactions = await getTransactions();
+      double total = 0.0;
+      for (var transaction in transactions) {
+        if (transaction.isExpense) {
+          total += transaction.amount;
+        }
+      }
+      return total;
+    } catch (e) {
+      print('Error calculating total expense: $e');
+      return 0.0;
+    }
+  }
+
+  // Get current net amount (income - expense)
+  static Future<double> getCurrentAmount() async {
+    try {
+      double totalIncome = await getTotalIncome();
+      double totalExpense = await getTotalExpense();
+      return totalIncome - totalExpense;
+    } catch (e) {
+      print('Error calculating current amount: $e');
+      return 0.0;
+    }
+  }
+
+  // Create sample transactions for demo purposes
+  static Future<void> createSampleTransactions() async {
+    try {
+      // Check if transactions already exist
+      List<TransactionModel> existingTransactions = await getTransactions();
+      if (existingTransactions.isNotEmpty) {
+        return; // Don't create samples if transactions already exist
+      }
+
+      // Create sample income
+      TransactionModel sampleIncome = TransactionModel(
+        id: 'sample_income_${DateTime.now().millisecondsSinceEpoch}',
+        name: 'Salary',
+        amount: 5000.0,
+        date: DateTime.now().subtract(Duration(days: 2)),
+        type: TransactionCategory.income,
+      );
+
+      // Create sample expense 1
+      TransactionModel sampleExpense1 = TransactionModel(
+        id: 'sample_expense1_${DateTime.now().millisecondsSinceEpoch}',
+        name: 'Groceries',
+        amount: 150.0,
+        date: DateTime.now().subtract(Duration(days: 1)),
+        type: TransactionCategory.expense,
+      );
+
+      // Create sample expense 2
+      TransactionModel sampleExpense2 = TransactionModel(
+        id: 'sample_expense2_${DateTime.now().millisecondsSinceEpoch}',
+        name: 'Coffee',
+        amount: 50.0,
+        date: DateTime.now(),
+        type: TransactionCategory.expense,
+      );
+
+      // Add sample transactions
+      await addTransaction(sampleIncome);
+      await addTransaction(sampleExpense1);
+      await addTransaction(sampleExpense2);
+      
+      print('Sample transactions created successfully');
+    } catch (e) {
+      print('Error creating sample transactions: $e');
+    }
+  }
+
+  // Legacy methods for backward compatibility (will be removed)
+  @deprecated
   static Future<bool> addIncomeToGoal(TransactionModel income) async {
-    return await addTransactionToGoal(income);
+    return await addIncome(income);
   }
 
-  // Add expense to current goal (using unified transaction model)
+  @deprecated
   static Future<bool> addExpenseToGoal(TransactionModel expense) async {
-    return await addTransactionToGoal(expense);
-  }
-
-  // Update transaction in current goal
-  static Future<bool> updateTransactionInGoal(TransactionModel updatedTransaction) async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        List<TransactionModel> updatedTransactions = currentGoal.transactions.map((transaction) {
-          return transaction.id == updatedTransaction.id ? updatedTransaction : transaction;
-        }).toList();
-        
-        GoalModel updatedGoal = currentGoal.copyWith(transactions: updatedTransactions);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
-    } catch (e) {
-      print('Error updating transaction in goal: $e');
-      return false;
-    }
-  }
-
-  // Remove transaction from current goal
-  static Future<bool> removeTransactionFromGoal(String transactionId) async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        List<TransactionModel> updatedTransactions = currentGoal.transactions
-            .where((transaction) => transaction.id != transactionId)
-            .toList();
-        
-        GoalModel updatedGoal = currentGoal.copyWith(transactions: updatedTransactions);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
-    } catch (e) {
-      print('Error removing transaction from goal: $e');
-      return false;
-    }
-  }
-
-  // Get all transactions from current goal
-  static Future<List<TransactionModel>> getTransactionsFromGoal() async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      return currentGoal?.transactions ?? [];
-    } catch (e) {
-      print('Error getting transactions from goal: $e');
-      return [];
-    }
-  }
-
-  // Get all incomes from current goal
-  static Future<List<TransactionModel>> getIncomesFromGoal() async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      return currentGoal?.transactions.where((t) => t.isIncome).toList() ?? [];
-    } catch (e) {
-      print('Error getting incomes from goal: $e');
-      return [];
-    }
-  }
-
-  // Get all expenses from current goal
-  static Future<List<TransactionModel>> getExpensesFromGoal() async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      return currentGoal?.transactions.where((t) => t.isExpense).toList() ?? [];
-    } catch (e) {
-      print('Error getting expenses from goal: $e');
-      return [];
-    }
-  }
-
-  // Legacy methods for backward compatibility
-  static Future<bool> updateIncomeInGoal(TransactionModel updatedIncome) async {
-    return await updateTransactionInGoal(updatedIncome);
-  }
-
-  static Future<bool> updateExpenseInGoal(TransactionModel updatedExpense) async {
-    return await updateTransactionInGoal(updatedExpense);
-  }
-
-  static Future<bool> removeIncomeFromGoal(String incomeId) async {
-    return await removeTransactionFromGoal(incomeId);
-  }
-
-  static Future<bool> removeExpenseFromGoal(String expenseId) async {
-    return await removeTransactionFromGoal(expenseId);
-  }
-
-  // Get goal progress information
-  static Future<Map<String, dynamic>> getGoalProgress() async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        List<TransactionModel> incomes = currentGoal.transactions.where((t) => t.isIncome).toList();
-        List<TransactionModel> expenses = currentGoal.transactions.where((t) => t.isExpense).toList();
-        
-        return {
-          'goalAmount': currentGoal.amount,
-          'currentAmount': currentGoal.currentAmount,
-          'remainingAmount': currentGoal.remainingAmount,
-          'progressPercentage': currentGoal.progressPercentage,
-          'isAchieved': currentGoal.isAchieved,
-          'totalIncomes': incomes.fold(0.0, (sum, income) => sum + income.amount),
-          'totalExpenses': expenses.fold(0.0, (sum, expense) => sum + expense.amount),
-          'incomesCount': incomes.length,
-          'expensesCount': expenses.length,
-        };
-      }
-      
-      return {};
-    } catch (e) {
-      print('Error getting goal progress: $e');
-      return {};
-    }
+    return await addExpense(expense);
   }
 }

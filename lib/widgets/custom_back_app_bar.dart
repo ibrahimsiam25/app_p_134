@@ -17,6 +17,9 @@ class CustomBackAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppColors.white,
       elevation: 0,
+      
+      scrolledUnderElevation: 0,
+      foregroundColor: AppColors.blackLight,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: AppColors.blackLight),
         onPressed: onBackPressed,

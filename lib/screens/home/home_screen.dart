@@ -1,14 +1,77 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
-
 import '../../core/constants/assets.dart';
+import '../../core/database/local_date.dart';
+import '../../core/constants/number_formatter.dart';
+import '../../models/transaction_model.dart';
 import 'widgets/balance_card.dart';
 import 'widgets/action_buttons.dart';
 import 'widgets/transactions_section.dart';
+import 'dart:async';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  double currentAmount = 0.0;
+  bool isLoading = true;
+  StreamSubscription<List<TransactionModel>>? _transactionsSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentAmount();
+    _listenToTransactions();
+  }
+
+  @override
+  void dispose() {
+    _transactionsSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _listenToTransactions() {
+    _transactionsSubscription = LocalData.transactionsStream.listen((transactions) {
+      if (mounted) {
+        // Calculate amount from the transactions received via stream
+        double totalIncome = 0.0;
+        double totalExpense = 0.0;
+        
+        for (var transaction in transactions) {
+          if (transaction.isIncome) {
+            totalIncome += transaction.amount;
+          } else {
+            totalExpense += transaction.amount;
+          }
+        }
+        
+        setState(() {
+          currentAmount = totalIncome - totalExpense;
+          isLoading = false;
+        });
+      }
+    });
+  }
+
+  Future<void> _loadCurrentAmount() async {
+    try {
+      double amount = await LocalData.getCurrentAmount();
+      setState(() {
+        currentAmount = amount;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading current amount: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +85,6 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Row(
@@ -63,8 +125,12 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 18),
-                // Balance Card with Create Goal
-                const BalanceCard(balance: '\$ 0,01'),
+                // Balance Card with Real Balance
+                isLoading
+                    ? const BalanceCard(balance: '\$ 0.00')
+                    : BalanceCard(
+                        balance: formatCurrency(currentAmount)
+                      ),
                 
                 const SizedBox(height: 30),
                 
@@ -72,7 +138,7 @@ class HomeScreen extends StatelessWidget {
                 const ActionButtons(),
                 
                 // Transactions Section
-              const  TransactionsSection(),
+                const TransactionsSection(),
               ],
             ),
           ),

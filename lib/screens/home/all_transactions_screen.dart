@@ -5,9 +5,9 @@ import '../../core/constants/app_text_styles.dart';
 import '../../core/constants/number_formatter.dart';
 import '../../core/database/local_date.dart';
 import '../../models/transaction_model.dart';
-import '../../models/goal_model.dart';
 import '../../widgets/custom_back_app_bar.dart';
 import 'widgets/transaction_item.dart';
+import 'dart:async';
 
 class AllTransactionsScreen extends StatefulWidget {
   const AllTransactionsScreen({super.key});
@@ -19,16 +19,36 @@ class AllTransactionsScreen extends StatefulWidget {
 class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   List<TransactionModel> allTransactions = [];
   bool isLoading = true;
+  StreamSubscription<List<TransactionModel>>? _transactionsSubscription;
 
   @override
   void initState() {
     super.initState();
     _loadTransactions();
+    _listenToTransactions();
+  }
+
+  @override
+  void dispose() {
+    _transactionsSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _listenToTransactions() {
+    _transactionsSubscription = LocalData.transactionsStream.listen((transactions) {
+      print('AllTransactionsScreen: Received ${transactions.length} transactions');
+      if (mounted) {
+        setState(() {
+          allTransactions = transactions;
+          isLoading = false;
+        });
+      }
+    });
   }
 
   Future<void> _loadTransactions() async {
     try {
-      List<TransactionModel> transactions = await LocalData.getTransactionsFromGoal();
+      List<TransactionModel> transactions = await LocalData.getTransactions();
       
       setState(() {
         allTransactions = transactions;

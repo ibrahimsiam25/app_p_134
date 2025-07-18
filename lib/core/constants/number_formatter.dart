@@ -24,3 +24,7 @@ String formatPercent(double value) {
     final sign = transaction.isIncome ? '+' : '-';
     return '\$ $sign${transaction.amount.toStringAsFixed(0)}';
   }
+
+  String formatCurrency(double amount) {
+    return '\$ ${amount.toStringAsFixed(2)}';
+  }

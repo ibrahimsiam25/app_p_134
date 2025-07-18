@@ -102,12 +102,11 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
       bool success = false;
 
       if (_hasGoal && _selectedIncomeType == TransactionType.addToGoal) {
-        // Add to goal
+        // Add to existing goal
         success = await LocalData.addIncomeToGoal(income);
       } else {
-        // Add to transactions only (create a simple goal with just this income)
-        // For now, we'll add to goal anyway since we need to have transactions management
-        success = await LocalData.addIncomeToGoal(income);
+        // Add income without needing a goal (will create temp goal if needed)
+        success = await LocalData.addIncome(income);
       }
 
       if (success) {

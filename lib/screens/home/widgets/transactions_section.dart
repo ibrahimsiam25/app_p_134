@@ -6,7 +6,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/number_formatter.dart';
 import '../../../core/database/local_date.dart';
 import '../../../models/transaction_model.dart';
-import '../../../models/goal_model.dart';
+import 'dart:async';
 
 class TransactionsSection extends StatefulWidget {
   const TransactionsSection({super.key});
@@ -18,22 +18,51 @@ class TransactionsSection extends StatefulWidget {
 class _TransactionsSectionState extends State<TransactionsSection> {
   List<TransactionModel> recentTransactions = [];
   bool isLoading = true;
+  StreamSubscription<List<TransactionModel>>? _transactionsSubscription;
 
   @override
   void initState() {
     super.initState();
+    _listenToTransactions();
     _loadRecentTransactions();
+  }
+
+  @override
+  void dispose() {
+    _transactionsSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _listenToTransactions() {
+    _transactionsSubscription = LocalData.transactionsStream.listen((transactions) {
+      print('TransactionsSection: Received ${transactions.length} transactions');
+      if (mounted) {
+        setState(() {
+          recentTransactions = transactions.take(3).toList();
+          isLoading = false;
+        });
+      }
+    });
   }
 
   Future<void> _loadRecentTransactions() async {
     try {
-      List<TransactionModel> allTransactions = await LocalData.getTransactionsFromGoal();
+      List<TransactionModel> allTransactions = await LocalData.getTransactions();
+      
+      if (allTransactions.isEmpty) {
+        // Create sample transactions if none exist
+        await LocalData.createSampleTransactions();
+        allTransactions = await LocalData.getTransactions();
+      }
 
       setState(() {
         // Show only the first 3 transactions (most recent)
         recentTransactions = allTransactions.take(3).toList();
         isLoading = false;
       });
+      
+      // Trigger notification to stream listeners after loading
+      await LocalData.notifyTransactionsChanged();
     } catch (e) {
       print('Error loading transactions: $e');
       setState(() {

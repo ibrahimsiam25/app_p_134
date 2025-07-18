@@ -102,12 +102,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       bool success = false;
 
       if (_hasGoal && _selectedExpenseType == TransactionType.addToGoal) {
-        // Add to goal
+        // Add to existing goal
         success = await LocalData.addExpenseToGoal(expense);
       } else {
-        // Add to transactions only (create a simple goal with just this expense)
-        // For now, we'll add to goal anyway since we need to have transactions management
-        success = await LocalData.addExpenseToGoal(expense);
+        // Add expense without needing a goal (will create temp goal if needed)
+        success = await LocalData.addExpense(expense);
       }
 
       if (success) {
