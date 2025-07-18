@@ -40,7 +40,7 @@ class DeadlineSection extends StatelessWidget {
             Checkbox(
               value: isDeadlineSet,
               onChanged: onDeadlineChanged,
-              activeColor: AppColors.gren,
+              activeColor: AppColors.green,
             ),
             Text(
               'Set a deadline',

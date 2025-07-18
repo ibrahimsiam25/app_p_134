@@ -139,7 +139,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   AppButton(
                     text: 'Save',
                     onTap: _isFormValid ? _saveGoal : null,
-                    containerColor: _isFormValid ? AppColors.gren : AppColors.white,
+                    containerColor: _isFormValid ? AppColors.green : AppColors.white,
                     fontColor:_isFormValid ? AppColors.blackLight : AppColors.gray,
                     borderColor:_isFormValid ?null: AppColors.gray,
                     width: double.infinity,

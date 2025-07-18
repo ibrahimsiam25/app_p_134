@@ -65,7 +65,7 @@ class ExitDialog extends StatelessWidget {
                   child: AppButton(
                     text: actionLabel,
                     onTap: onAction,
-                    containerColor: AppColors.gren,
+                    containerColor: AppColors.green,
                     fontColor: AppColors.black,
                     height: 45.h,
                   ),

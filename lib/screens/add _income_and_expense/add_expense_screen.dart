@@ -202,7 +202,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             AppButton(
               text: _isLoading ? 'Saving...' : 'Save',
               onTap: (_isFormValid && !_isLoading) ? _saveExpense : null,
-              containerColor: (_isFormValid && !_isLoading) ? AppColors.gren : AppColors.white,
+              containerColor: (_isFormValid && !_isLoading) ? AppColors.green : AppColors.white,
               fontColor: (_isFormValid && !_isLoading) ? AppColors.blackLight : AppColors.gray,
               borderColor: (_isFormValid && !_isLoading) ? null : AppColors.gray,
               width: double.infinity,

@@ -55,7 +55,7 @@ class _PreloaderScreenState extends State<PreloaderScreen> {
               height: 100,
               width: 100,
               decoration: BoxDecoration(
-                  color: AppColors.gren,
+                  color: AppColors.green,
                   borderRadius: BorderRadius.circular(20)),
             ),
             const Padding(

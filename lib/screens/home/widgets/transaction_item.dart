@@ -46,7 +46,7 @@ class TransactionItem extends StatelessWidget {
           Text(
             amount,
             style: AppTextStyles.header16.copyWith(
-              color: isIncome ? AppColors.gren : AppColors.red,
+              color: isIncome ? AppColors.green : AppColors.red,
             
             ),
           ),
