@@ -150,11 +150,7 @@ class CreateGoalFunctions {
       // Check if user already has a goal
       bool hasExistingGoal = await LocalData.hasGoal();
       
-      if (hasExistingGoal) {
-        // Show confirmation dialog to replace existing goal
-        bool shouldReplace = await showReplaceGoalDialog(context: context);
-        if (!shouldReplace) return;
-      }
+    
 
       // Parse the goal amount
       double amount = double.parse(goalAmountText);

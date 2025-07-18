@@ -158,7 +158,7 @@ class _ChangeGoalScreenState extends State<ChangeGoalScreen> {
 
                   // Save button
                   AppButton(
-                    text: 'Update',
+                    text: 'Save',
                     onTap: _isFormValid ? _updateGoal : null,
                     containerColor: _isFormValid ? AppColors.green : AppColors.white,
                     fontColor: _isFormValid ? AppColors.blackLight : AppColors.gray,
