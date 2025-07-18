@@ -5,6 +5,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/database/local_date.dart';
 import '../../models/goal_model.dart';
 import '../../widgets/app_button.dart';
+import '../../widgets/custom_snack_bar.dart';
 import 'widgets/date_picker_widget.dart';
 import 'widgets/time_picker_widget.dart';
 import 'widgets/exit_dialog.dart';
@@ -158,12 +159,12 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
       if (success) {
         // Show success message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Goal saved successfully!'),
-              backgroundColor: Colors.green,
-            ),
+          CustomSnackBar.show(
+            context,
+            message: 'Goal saved successfully!',
+            isSuccess: true,
           );
+
           
           // Navigate back
           Navigator.of(context).pop();
@@ -171,23 +172,23 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
       } else {
         // Show error message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to save goal. Please try again.'),
-              backgroundColor: Colors.red,
-            ),
+          CustomSnackBar.show(
+            context,
+            message: 'Failed to save goal. Please try again.',
+            isError: true,
           );
+
         }
       }
     } catch (e) {
       // Show error message for invalid input
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please enter a valid amount.'),
-            backgroundColor: Colors.red,
-          ),
+        CustomSnackBar.show(
+          context,
+          message: 'Please enter a valid amount.',
+          isError: true,
         );
+
       }
     }
   }
