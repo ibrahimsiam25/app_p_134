@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/database/local_date.dart';
+import '../../models/goal_model.dart';
 import '../../widgets/app_button.dart';
 import 'widgets/date_picker_widget.dart';
 import 'widgets/time_picker_widget.dart';
@@ -123,6 +125,73 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     }
   }
 
+  Future<void> _saveGoal() async {
+    if (!_isFormValid) return;
+
+    try {
+      // Parse the goal amount
+      double amount = double.parse(_goalAmountController.text);
+      
+      // Combine date and time for deadline
+      DateTime? deadline;
+      if (_selectedDate != null && _selectedTime != null) {
+        deadline = DateTime(
+          _selectedDate!.year,
+          _selectedDate!.month,
+          _selectedDate!.day,
+          _selectedTime!.hour,
+          _selectedTime!.minute,
+        );
+      }
+
+      // Create goal model
+      final goal = GoalModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        amount: amount,
+        deadline: deadline,
+        createdAt: DateTime.now(),
+      );
+
+      // Save goal to local storage
+      bool success = await LocalData.saveGoal(goal);
+      
+      if (success) {
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Goal saved successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          
+          // Navigate back
+          Navigator.of(context).pop();
+        }
+      } else {
+        // Show error message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to save goal. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Show error message for invalid input
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please enter a valid amount.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,10 +243,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   // Save Button
                   AppButton(
                     text: 'Save',
-                    onTap: _isFormValid ? () {
-                      // Save goal logic here
-                      Navigator.of(context).pop();
-                    } : null,
+                    onTap: _isFormValid ? _saveGoal : null,
                     containerColor: _isFormValid ? AppColors.gren : AppColors.white,
                     fontColor:_isFormValid ? AppColors.black : AppColors.gray,
                     borderColor:_isFormValid ?null: AppColors.gray,
