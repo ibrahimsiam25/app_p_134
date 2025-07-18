@@ -7,8 +7,8 @@ import '../../../core/constants/assets.dart';
 import '../../../core/helpers/goal_tree_helper.dart';
 import '../../../cubit/goalCubit/goal_cubit.dart';
 import '../../../cubit/goalCubit/goal_state.dart';
-import '../../../core/constants/number_formatter.dart';
 import 'success_dialog.dart';
+import 'goal_status_text.dart';
 
 
 class BalanceCard extends StatelessWidget {
@@ -39,7 +39,7 @@ class BalanceCard extends StatelessWidget {
                   color: AppColors.lightGray
                 ),
               ),
-              _buildGoalStatusText(state),
+          
               const SizedBox(height:5),
               Center(
                 child: Container(
@@ -60,46 +60,12 @@ class BalanceCard extends StatelessWidget {
                   ),
                 ),
               ),
+              GoalStatusText(state: state),
             ],
           ),
         );
       },
     );
-  }
-
-  Widget _buildGoalStatusText(GoalState state) {
-    if (state is InProgressGoalState) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Text(
-          'Financial goal Saved: ${formatCurrency(state.currentAmount)} / ${formatCurrency(state.goal.amount)}',
-          style: AppTextStyles.header14.copyWith(
-            color: AppColors.gray,
-          ),
-        ),
-      );
-    } else if (state is GoalAchievedState) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Text(
-          'Financial goal achieved',
-          style: AppTextStyles.header14.copyWith(
-            color: AppColors.green,
-          ),
-        ),
-      );
-    } else if (state is GoalFailedState) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Text(
-          'Financial goal not achieved',
-          style: AppTextStyles.header14.copyWith(
-            color: AppColors.red,
-          ),
-        ),
-      );
-    }
-    return const SizedBox.shrink();
   }
 
   Widget _buildGoalImage(GoalState state) {
