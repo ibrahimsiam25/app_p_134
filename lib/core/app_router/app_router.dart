@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../screens/add_income/add_income_screen.dart';
+import '../../screens/add _income_and_expense/add_income_screen.dart';
 import '../../screens/create_goal/create_goal_screen.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/preloader/preloader_screen.dart';
