@@ -21,6 +21,7 @@ class TransactionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+       behavior: HitTestBehavior.opaque, 
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: Row(

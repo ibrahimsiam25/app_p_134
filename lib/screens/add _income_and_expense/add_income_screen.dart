@@ -6,7 +6,7 @@ import '../../core/database/local_date.dart';
 import '../../models/transaction_model.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/custom_snack_bar.dart';
-import '../../widgets/exit_dialog.dart';
+import '../../widgets/coustom_dialog.dart';
 import '../../widgets/price_amount_input.dart';
 import 'widgets/text_input.dart';
 import 'widgets/transaction_type_selector.dart';
@@ -101,13 +101,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
 
       bool success = false;
 
-      if (_hasGoal && _selectedIncomeType == TransactionType.addToGoal) {
-        // Add to existing goal
-        success = await LocalData.addIncomeToGoal(income);
-      } else {
-        // Add income without needing a goal (will create temp goal if needed)
-        success = await LocalData.addIncome(income);
-      }
+  success = await LocalData.addIncome(income);
 
       if (success) {
         if (mounted) {

@@ -9,13 +9,15 @@ class AppColors {
   static const Color lightGray = Color(0xffF2F2F2);
   static const Color royalBlue = Color(0xff2B48EB);
   static const Color red = Color(0xffDE2828);
+  static const Color brightRed = Color(0xffFF3B30);
   static const Color lavenderPurple = Color(0xff9163F6);
   static const Color royalPurple = Color(0xff673BC3);
   static const Color irisPurple = Color(0xff6E45C0);
   static const Color darkPurple = Color(0xff1E1240);
   static const Color gray = Color(0xffAFAEAE);
   static const Color blue = Color(0xff007AFF);
-  
+  static const Color darkGray = Color(0xFF3D3D3D);
+
   static const LinearGradient purpleGradient = LinearGradient(
             colors: [
               AppColors.lavenderPurple,

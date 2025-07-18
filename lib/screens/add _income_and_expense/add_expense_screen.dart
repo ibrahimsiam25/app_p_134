@@ -6,7 +6,7 @@ import '../../core/database/local_date.dart';
 import '../../models/transaction_model.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/custom_snack_bar.dart';
-import '../../widgets/exit_dialog.dart';
+import '../../widgets/coustom_dialog.dart';
 import '../../widgets/price_amount_input.dart';
 import 'widgets/text_input.dart';
 import 'widgets/transaction_type_selector.dart';
@@ -101,13 +101,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
       bool success = false;
 
-      if (_hasGoal && _selectedExpenseType == TransactionType.addToGoal) {
-        // Add to existing goal
-        success = await LocalData.addExpenseToGoal(expense);
-      } else {
-        // Add expense without needing a goal (will create temp goal if needed)
-        success = await LocalData.addExpense(expense);
-      }
+    success = await LocalData.addExpense(expense);
 
       if (success) {
         if (mounted) {

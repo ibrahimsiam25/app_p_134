@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../core/database/local_date.dart';
 import '../../../models/goal_model.dart';
 import '../../../widgets/custom_snack_bar.dart';
-import '../../../widgets/exit_dialog.dart';
+import '../../../widgets/coustom_dialog.dart';
 import 'date_picker_widget.dart';
 import 'time_picker_widget.dart';
 

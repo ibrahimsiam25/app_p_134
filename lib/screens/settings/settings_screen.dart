@@ -1,4 +1,4 @@
-import 'package:app_p_134/widgets/exit_dialog.dart';
+import 'package:app_p_134/widgets/coustom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';

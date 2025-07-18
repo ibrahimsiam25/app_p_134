@@ -48,13 +48,7 @@ class _TransactionsSectionState extends State<TransactionsSection> {
   Future<void> _loadRecentTransactions() async {
     try {
       List<TransactionModel> allTransactions = await LocalData.getTransactions();
-      
-      if (allTransactions.isEmpty) {
-        // Create sample transactions if none exist
-        await LocalData.createSampleTransactions();
-        allTransactions = await LocalData.getTransactions();
-      }
-
+ 
       setState(() {
         // Show only the first 3 transactions (most recent)
         recentTransactions = allTransactions.take(3).toList();

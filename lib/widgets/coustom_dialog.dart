@@ -1,103 +1,78 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_text_styles.dart';
+import 'app_button.dart';
 
-class CoustomDialog extends StatelessWidget {
-  final Function()? onAllow;
-  final VoidCallback cansel;
-  final String textOne;
-  final String textTwo;
-  final String actionText;
-  final String textCencel;
-  final Color color;
-  final double height;
+class ExitDialog extends StatelessWidget {
+  final VoidCallback onCancel;
+  final VoidCallback onAction;
+  final String actionLabel;
+ final String title;
 
-  const CoustomDialog({
+  final String message;
+  const ExitDialog({
     super.key,
-    this.onAllow,
-    this.textCencel = 'Cancel',
-    required this.cansel,
-    required this.textOne,
-    required this.textTwo,
-    this.actionText = 'Delete',
-    this.color = AppColors.red,
-    this.height = 160,
+    required this.onCancel,
+    required this.onAction,
+    required this.title,
+    required this.message,
+    this.actionLabel = 'Exit', 
   });
 
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-      child: AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        backgroundColor: AppColors.white,
-        contentPadding: EdgeInsets.zero,
-        content: SizedBox(
-          height: height,
-          width: 330,
-          child: Column(
-            children: [
-              const Spacer(),
-              Text(
-                textOne,
-                style: AppTextStyles.header18.copyWith(
-                  color: AppColors.black,
-                  fontWeight: FontWeight.w600,
-                ),
+    return Dialog(
+      backgroundColor: AppColors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(24.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: AppTextStyles.header18.copyWith(
+                color: AppColors.black,
+                fontWeight: FontWeight.w600,
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 17, top: 5),
-                child: Text(
-                  textAlign: TextAlign.center,
-                  textTwo,
-                  style:
-                      AppTextStyles.header16.copyWith(color: AppColors.black),
-                ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              message,
+              style: AppTextStyles.header16.copyWith(
+                color: AppColors.black,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: cansel,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 48),
-                      decoration: BoxDecoration(
-                        color: AppColors.royalBlue,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Text(
-                        textCencel,
-                        style: AppTextStyles.header18
-                            .copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 24.h),
+            Row(
+              children: [
+                Expanded(
+                  child: AppButton(
+                    text: 'Cancel',
+                    onTap: onCancel,
+                    containerColor: AppColors.white,
+                    fontColor: AppColors.black,
+                    height: 45.h,
                   ),
-                  GestureDetector(
-                    onTap: onAllow,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 7, horizontal: 24),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Text(
-                        actionText,
-                        style: AppTextStyles.header18.copyWith(
-                            fontWeight: FontWeight.w600, color: color),
-                      ),
-                    ),
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: AppButton(
+                    text: actionLabel,
+                    onTap: onAction,
+                    containerColor: AppColors.green,
+                    fontColor: AppColors.black,
+                    height: 45.h,
                   ),
-                ],
-              ),
-              const Spacer(),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

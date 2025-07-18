@@ -101,39 +101,8 @@ class LocalData {
     }
   }
 
-  // Update goal completion status
-  static Future<bool> updateGoalCompletion(bool isCompleted) async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        GoalModel updatedGoal = currentGoal.copyWith(isCompleted: isCompleted);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
-    } catch (e) {
-      print('Error updating goal completion: $e');
-      return false;
-    }
-  }
 
-  // Update goal amount
-  static Future<bool> updateGoalAmount(double newAmount) async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        GoalModel updatedGoal = currentGoal.copyWith(amount: newAmount);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
-    } catch (e) {
-      print('Error updating goal amount: $e');
-      return false;
-    }
-  }
+
 
   // Transaction Management Methods (Independent of Goals)
   
@@ -190,15 +159,7 @@ class LocalData {
     }
   }
 
-  // Add income (using unified transaction model)
-  static Future<bool> addIncome(TransactionModel income) async {
-    return await addTransaction(income);
-  }
 
-  // Add expense (using unified transaction model)
-  static Future<bool> addExpense(TransactionModel expense) async {
-    return await addTransaction(expense);
-  }
 
   // Update transaction in storage
   static Future<bool> updateTransaction(TransactionModel updatedTransaction) async {
@@ -305,61 +266,18 @@ class LocalData {
     }
   }
 
-  // Create sample transactions for demo purposes
-  static Future<void> createSampleTransactions() async {
-    try {
-      // Check if transactions already exist
-      List<TransactionModel> existingTransactions = await getTransactions();
-      if (existingTransactions.isNotEmpty) {
-        return; // Don't create samples if transactions already exist
-      }
 
-      // Create sample income
-      TransactionModel sampleIncome = TransactionModel(
-        id: 'sample_income_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Salary',
-        amount: 5000.0,
-        date: DateTime.now().subtract(Duration(days: 2)),
-        type: TransactionCategory.income,
-      );
-
-      // Create sample expense 1
-      TransactionModel sampleExpense1 = TransactionModel(
-        id: 'sample_expense1_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Groceries',
-        amount: 150.0,
-        date: DateTime.now().subtract(Duration(days: 1)),
-        type: TransactionCategory.expense,
-      );
-
-      // Create sample expense 2
-      TransactionModel sampleExpense2 = TransactionModel(
-        id: 'sample_expense2_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Coffee',
-        amount: 50.0,
-        date: DateTime.now(),
-        type: TransactionCategory.expense,
-      );
-
-      // Add sample transactions
-      await addTransaction(sampleIncome);
-      await addTransaction(sampleExpense1);
-      await addTransaction(sampleExpense2);
-      
-      print('Sample transactions created successfully');
-    } catch (e) {
-      print('Error creating sample transactions: $e');
-    }
+  // Add income (using unified transaction model)
+  static Future<bool> addIncome(TransactionModel income) async {
+    return await addTransaction(income);
   }
 
-  // Legacy methods for backward compatibility (will be removed)
-  @deprecated
-  static Future<bool> addIncomeToGoal(TransactionModel income) async {
-    return await addIncome(income);
+  // Add expense (using unified transaction model)
+  static Future<bool> addExpense(TransactionModel expense) async {
+    return await addTransaction(expense);
   }
-
-  @deprecated
-  static Future<bool> addExpenseToGoal(TransactionModel expense) async {
-    return await addExpense(expense);
+  static void deleteTransaction(String id)async {
+   await  removeTransaction(id);
   }
 }
+ 
