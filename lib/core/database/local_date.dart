@@ -4,95 +4,63 @@ import '../../models/goal_model.dart';
 
 class LocalData {
   static late SharedPreferences prefs;
-  static const String _goalsKey = 'goals_list';
+  static const String _goalKey = 'current_goal'; // Changed from _goalsKey to _goalKey
 
   static Future<void> initLocalService() async {
     prefs = await SharedPreferences.getInstance();
   }
 
-  // Save a single goal
+  // Save/Update the single goal (replaces any existing goal)
   static Future<bool> saveGoal(GoalModel goal) async {
     try {
-      List<GoalModel> goals = await getGoals();
-      
-      // Check if goal with same ID already exists, if so update it
-      int existingIndex = goals.indexWhere((g) => g.id == goal.id);
-      if (existingIndex != -1) {
-        goals[existingIndex] = goal;
-      } else {
-        goals.add(goal);
-      }
-
-      // Convert goals list to JSON strings
-      List<String> goalsJsonList = goals.map((goal) => jsonEncode(goal.toJson())).toList();
-      print("Saving goals++++++++++: $goalsJsonList");
-      return await prefs.setStringList(_goalsKey, goalsJsonList);
+      // Convert goal to JSON string
+      String goalJson = jsonEncode(goal.toJson());
+      print("Saving goal: $goalJson");
+      return await prefs.setString(_goalKey, goalJson);
     } catch (e) {
       print('Error saving goal: $e');
       return false;
     }
   }
 
-  // Get all goals
-  static Future<List<GoalModel>> getGoals() async {
+  // Get the current goal (returns null if no goal exists)
+  static Future<GoalModel?> getCurrentGoal() async {
     try {
-      List<String>? goalsJsonList = prefs.getStringList(_goalsKey);
+      String? goalJson = prefs.getString(_goalKey);
       
-      if (goalsJsonList == null || goalsJsonList.isEmpty) {
-        return [];
+      if (goalJson == null || goalJson.isEmpty) {
+        print("No goal found in storage");
+        return null;
       }
 
-      List<GoalModel> goals = goalsJsonList
-          .map((goalJson) => GoalModel.fromJson(jsonDecode(goalJson)))
-          .toList();
-
-      // Sort goals by creation date (newest first)
-      goals.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-     
-      return goals;
+      GoalModel goal = GoalModel.fromJson(jsonDecode(goalJson));
+      print("Retrieved goal: ${goal.toString()}");
+      return goal;
     } catch (e) {
-      print('Error getting goals: $e');
-      return [];
-    }
-  }
-
-  // Get a specific goal by ID
-  static Future<GoalModel?> getGoalById(String id) async {
-    try {
-      List<GoalModel> goals = await getGoals();
-       print(" get goal by ID++++++++++: $goals");
-      return goals.firstWhere((goal) => goal.id == id);
-    } catch (e) {
-      print('Error getting goal by ID: $e');
+      print('Error getting goal: $e');
       return null;
     }
   }
 
-  // Delete a goal by ID
-  static Future<bool> deleteGoal(String id) async {
+  // Check if user has a goal
+  static Future<bool> hasGoal() async {
     try {
-      List<GoalModel> goals = await getGoals();
-      goals.removeWhere((goal) => goal.id == id);
-
-      List<String> goalsJsonList = goals.map((goal) => jsonEncode(goal.toJson())).toList();
-      
-      return await prefs.setStringList(_goalsKey, goalsJsonList);
+      String? goalJson = prefs.getString(_goalKey);
+      return goalJson != null && goalJson.isNotEmpty;
     } catch (e) {
-      print('Error deleting goal: $e');
+      print('Error checking if goal exists: $e');
       return false;
     }
   }
 
   // Update goal completion status
-  static Future<bool> updateGoalCompletion(String id, bool isCompleted) async {
+  static Future<bool> updateGoalCompletion(bool isCompleted) async {
     try {
-      List<GoalModel> goals = await getGoals();
-      int index = goals.indexWhere((goal) => goal.id == id);
+      GoalModel? currentGoal = await getCurrentGoal();
       
-      if (index != -1) {
-        goals[index] = goals[index].copyWith(isCompleted: isCompleted);
-        List<String> goalsJsonList = goals.map((goal) => jsonEncode(goal.toJson())).toList();
-        return await prefs.setStringList(_goalsKey, goalsJsonList);
+      if (currentGoal != null) {
+        GoalModel updatedGoal = currentGoal.copyWith(isCompleted: isCompleted);
+        return await saveGoal(updatedGoal);
       }
       
       return false;
@@ -102,15 +70,84 @@ class LocalData {
     }
   }
 
-  // Clear all goals
-  static Future<bool> clearAllGoals() async {
+  // Update goal amount
+  static Future<bool> updateGoalAmount(double newAmount) async {
     try {
-       print("Clearing all goals from storage--------");
-      return await prefs.remove(_goalsKey);
+      GoalModel? currentGoal = await getCurrentGoal();
       
+      if (currentGoal != null) {
+        GoalModel updatedGoal = currentGoal.copyWith(amount: newAmount);
+        return await saveGoal(updatedGoal);
+      }
+      
+      return false;
     } catch (e) {
-      print('Error clearing goals: $e');
+      print('Error updating goal amount: $e');
       return false;
     }
+  }
+
+  // Update goal deadline
+  static Future<bool> updateGoalDeadline(DateTime? newDeadline) async {
+    try {
+      GoalModel? currentGoal = await getCurrentGoal();
+      
+      if (currentGoal != null) {
+        GoalModel updatedGoal = currentGoal.copyWith(deadline: newDeadline);
+        return await saveGoal(updatedGoal);
+      }
+      
+      return false;
+    } catch (e) {
+      print('Error updating goal deadline: $e');
+      return false;
+    }
+  }
+
+  // Delete the current goal
+  static Future<bool> deleteCurrentGoal() async {
+    try {
+      print("Deleting current goal from storage");
+      return await prefs.remove(_goalKey);
+    } catch (e) {
+      print('Error deleting goal: $e');
+      return false;
+    }
+  }
+
+  // Legacy methods for backward compatibility (deprecated)
+  @deprecated
+  static Future<List<GoalModel>> getGoals() async {
+    GoalModel? goal = await getCurrentGoal();
+    return goal != null ? [goal] : [];
+  }
+
+  @deprecated
+  static Future<GoalModel?> getGoalById(String id) async {
+    GoalModel? goal = await getCurrentGoal();
+    return (goal != null && goal.id == id) ? goal : null;
+  }
+
+  @deprecated
+  static Future<bool> deleteGoal(String id) async {
+    GoalModel? goal = await getCurrentGoal();
+    if (goal != null && goal.id == id) {
+      return await deleteCurrentGoal();
+    }
+    return false;
+  }
+
+  @deprecated
+  static Future<bool> updateGoalCompletionById(String id, bool isCompleted) async {
+    GoalModel? goal = await getCurrentGoal();
+    if (goal != null && goal.id == id) {
+      return await updateGoalCompletion(isCompleted);
+    }
+    return false;
+  }
+
+  @deprecated
+  static Future<bool> clearAllGoals() async {
+    return await deleteCurrentGoal();
   }
 }

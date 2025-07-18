@@ -126,10 +126,44 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     }
   }
 
+  Future<bool> _showReplaceGoalDialog() async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Replace Existing Goal?'),
+        content: const Text(
+          'You already have a goal. Creating a new goal will replace your current one. Do you want to continue?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text(
+              'Replace',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
   Future<void> _saveGoal() async {
     if (!_isFormValid) return;
 
     try {
+      // Check if user already has a goal
+      bool hasExistingGoal = await LocalData.hasGoal();
+      
+      if (hasExistingGoal && mounted) {
+        // Show confirmation dialog to replace existing goal
+        bool shouldReplace = await _showReplaceGoalDialog();
+        if (!shouldReplace) return;
+      }
+
       // Parse the goal amount
       double amount = double.parse(_goalAmountController.text);
       
@@ -145,7 +179,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
         );
       }
 
-      // Create goal model
+      // Create goal model (this will replace any existing goal)
       final goal = GoalModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         amount: amount,
@@ -153,7 +187,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
         createdAt: DateTime.now(),
       );
 
-      // Save goal to local storage
+      // Save goal to local storage (replaces any existing goal)
       bool success = await LocalData.saveGoal(goal);
       
       if (success) {
@@ -161,7 +195,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
         if (mounted) {
           CustomSnackBar.show(
             context,
-            message: 'Goal saved successfully!',
+            message: hasExistingGoal ? 'Goal updated successfully!' : 'Goal saved successfully!',
             isSuccess: true,
           );
 
