@@ -8,7 +8,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/custom_snack_bar.dart';
 import 'widgets/date_picker_widget.dart';
 import 'widgets/time_picker_widget.dart';
-import 'widgets/exit_dialog.dart';
+import '../../widgets/exit_dialog.dart';
 import 'widgets/goal_amount_input.dart';
 import 'widgets/deadline_section.dart';
 import 'widgets/custom_app_bar.dart';
@@ -109,6 +109,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     showDialog(
       context: context,
       builder: (context) => ExitDialog(
+        title: 'Heads up!',
+        message:  'If you exit, you\'ll lose any unsaved work.',
         onCancel: () => Navigator.of(context).pop(),
         onExit: () {
           Navigator.of(context).pop();

@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../widgets/app_button.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_text_styles.dart';
+import 'app_button.dart';
 
 class ExitDialog extends StatelessWidget {
   final VoidCallback onCancel;
   final VoidCallback onExit;
-
+ final String title;
+  final String message;
   const ExitDialog({
-    Key? key,
+    super.key,
     required this.onCancel,
     required this.onExit,
-  }) : super(key: key);
+    required this.title,
+    required this.message,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class ExitDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Heads up!',
+              title,
               style: AppTextStyles.header18.copyWith(
                 color: AppColors.black,
                 fontWeight: FontWeight.w600,
@@ -36,7 +39,7 @@ class ExitDialog extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'If you exit, you\'ll lose any unsaved work.',
+              message,
               style: AppTextStyles.header16.copyWith(
                 color: AppColors.black,
               ),
