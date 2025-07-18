@@ -10,7 +10,7 @@ class AppButton extends StatelessWidget {
     this.radius,
     this.margin,
     this.fontSize,
-    this.fontColor = AppColors.black,
+    this.fontColor = AppColors.blackLight,
     required this.containerColor,
     this.fontWeight = FontWeight.w600,
     required this.onTap,

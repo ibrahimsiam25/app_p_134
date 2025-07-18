@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/assets.dart';
+import '../../add_income/add_income_screen.dart';
 
 
 class ActionButton extends StatelessWidget {
@@ -67,7 +68,12 @@ class ActionButtons extends StatelessWidget {
             title: 'Add Income  ',
             iconPath: Assets.imagesIncome,
             onTap: () {
-              // Navigate to add income screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddIncomeScreen(),
+                ),
+              );
             },
           ),
           ActionButton(

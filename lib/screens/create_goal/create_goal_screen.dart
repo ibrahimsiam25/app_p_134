@@ -1,12 +1,11 @@
+import 'package:app_p_134/widgets/price_amount_input.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../widgets/app_button.dart';
-import 'widgets/goal_amount_input.dart';
+import '../../widgets/custom_back_app_bar.dart';
 import 'widgets/deadline_section.dart';
-import 'widgets/custom_app_bar.dart';
-import 'create_goal_functions.dart';
+import 'widgets/create_goal_functions.dart';
 
 
 class CreateGoalScreen extends StatefulWidget {
@@ -91,7 +90,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: CustomAppBar(
+      appBar: CustomBackAppBar(
         title: 'Create a goal',
         onBackPressed: _onBackPressed,
       ),
@@ -104,7 +103,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Goal Amount Section
-                  GoalAmountInput(
+                  PriceAmountInput(
+                    title: 'Goal amount',
                     controller: _goalAmountController,
                     focusNode: _focusNode,
                     onChanged: () {
@@ -140,7 +140,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     text: 'Save',
                     onTap: _isFormValid ? _saveGoal : null,
                     containerColor: _isFormValid ? AppColors.gren : AppColors.white,
-                    fontColor:_isFormValid ? AppColors.black : AppColors.gray,
+                    fontColor:_isFormValid ? AppColors.blackLight : AppColors.gray,
                     borderColor:_isFormValid ?null: AppColors.gray,
                     width: double.infinity,
                     height: 60.h,

@@ -1,17 +1,17 @@
+import 'package:app_p_134/core/constants/app_colors.dart';
+import 'package:app_p_134/core/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomBackAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback onBackPressed;
 
-  const CustomAppBar({
-    Key? key,
+  const CustomBackAppBar({
+    super.key,
     required this.title,
     required this.onBackPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppColors.white,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: AppColors.black),
+        icon: const Icon(Icons.arrow_back_ios, color: AppColors.blackLight),
         onPressed: onBackPressed,
       ),
       title: Text(

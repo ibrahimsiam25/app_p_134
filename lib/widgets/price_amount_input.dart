@@ -1,20 +1,21 @@
+import 'package:app_p_134/core/constants/app_colors.dart';
+import 'package:app_p_134/core/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
 
-class GoalAmountInput extends StatelessWidget {
+class PriceAmountInput extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
+  final String title;
   final VoidCallback onChanged;
 
-  const GoalAmountInput({
-    Key? key,
+  const PriceAmountInput({
+    super.key,
     required this.controller,
     required this.focusNode,
-    required this.onChanged,
-  }) : super(key: key);
+    required this.onChanged, required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +23,12 @@ class GoalAmountInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Goal amount',
+         title,
           style: TextStyle(
             fontFamily: AppTextStyles.fontMontserrat,
             fontSize: 16.sp,
             fontWeight: FontWeight.w400,
-            color: AppColors.black,
+            color: AppColors.blackLight,
           ),
         ),
         SizedBox(height: 8.h),
@@ -41,7 +42,7 @@ class GoalAmountInput extends StatelessWidget {
             controller: controller,
             focusNode: focusNode,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            style: AppTextStyles.header16.copyWith(color: AppColors.black),
+            style: AppTextStyles.header16.copyWith(color: AppColors.blackLight),
             maxLength: 6,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
@@ -55,7 +56,7 @@ class GoalAmountInput extends StatelessWidget {
                 padding: EdgeInsets.only(left: 16.w, right: 8.w),
                 child: Icon(
                   Icons.attach_money,
-                  color: AppColors.black,
+                  color: AppColors.blackLight,
                   size: 20.sp,
                 ),
               ),
