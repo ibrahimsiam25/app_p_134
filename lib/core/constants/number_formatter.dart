@@ -1,3 +1,5 @@
+import 'package:app_p_134/models/transaction_model.dart';
+
 String formatNumber(double value) {
   if (value % 1 == 0) {
     return value.toInt().toString();
@@ -14,3 +16,11 @@ String formatPercent(double value) {
     return '${percent.toStringAsFixed(1).replaceAll('.', ',')}%';
   }
 }
+  String formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+  }
+
+  String formatAmount(TransactionModel transaction) {
+    final sign = transaction.isIncome ? '+' : '-';
+    return '\$ $sign${transaction.amount.toStringAsFixed(0)}';
+  }

@@ -7,50 +7,54 @@ class TransactionItem extends StatelessWidget {
   final String date;
   final String amount;
   final bool isIncome;
-  
+  final VoidCallback? onTap; 
   const TransactionItem({
     super.key,
     required this.title,
     required this.date,
     required this.amount,
     required this.isIncome,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.header16.copyWith(
-                    color: AppColors.blackLight,
-                  
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.header16.copyWith(
+                      color: AppColors.blackLight,
+                    
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  date,
-                  style: AppTextStyles.header14.copyWith(
-                    color: AppColors.gray,
+                  const SizedBox(height: 5),
+                  Text(
+                    date,
+                    style: AppTextStyles.header14.copyWith(
+                      color: AppColors.gray,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Text(
-            amount,
-            style: AppTextStyles.header16.copyWith(
-              color: isIncome ? AppColors.green : AppColors.red,
-            
+            Text(
+              amount,
+              style: AppTextStyles.header16.copyWith(
+                color: isIncome ? AppColors.green : AppColors.red,
+              
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
