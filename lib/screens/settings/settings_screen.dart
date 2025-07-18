@@ -53,12 +53,14 @@ class SettingsScreen extends StatelessWidget {
   void _showClearDataDialog(BuildContext context) {
       showDialog(
         context: context,
-        builder: (context) =>  ExitDialog(
+        builder: (context) =>  CoustomDialog(
       title: 'Delete Everything?',
       message: 'This action can\'t be undone.',
-      actionLabel: 'Delete',
-      onCancel: () => Navigator.of(context).pop(),
-      onAction: () async {
+         primaryLabel:'Delete', 
+          secondaryLabel: "Cancel",
+
+      onSecondary: () => Navigator.of(context).pop(),
+      onPrimary: () async {
         Navigator.of(context).pop();
         await _clearAllData(context);
       },

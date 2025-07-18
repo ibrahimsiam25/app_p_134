@@ -4,20 +4,22 @@ import '../core/constants/app_colors.dart';
 import '../core/constants/app_text_styles.dart';
 import 'app_button.dart';
 
-class ExitDialog extends StatelessWidget {
-  final VoidCallback onCancel;
-  final VoidCallback onAction;
-  final String actionLabel;
- final String title;
-
-  final String message;
-  const ExitDialog({
+class CoustomDialog extends StatelessWidget {
+  final VoidCallback onPrimary;
+  final VoidCallback onSecondary;
+  final String primaryLabel;
+  final String secondaryLabel;
+  final String title;
+   final String message;
+  const CoustomDialog({
     super.key,
-    required this.onCancel,
-    required this.onAction,
+    required this.onPrimary,
+    required this.onSecondary,
     required this.title,
     required this.message,
-    this.actionLabel = 'Exit', 
+     required this.primaryLabel,
+      required this.secondaryLabel,
+    
   });
 
   @override
@@ -53,8 +55,8 @@ class ExitDialog extends StatelessWidget {
               children: [
                 Expanded(
                   child: AppButton(
-                    text: 'Cancel',
-                    onTap: onCancel,
+                    text: secondaryLabel,
+                    onTap: onSecondary,
                     containerColor: AppColors.white,
                     fontColor: AppColors.black,
                     height: 45.h,
@@ -63,8 +65,8 @@ class ExitDialog extends StatelessWidget {
                 SizedBox(width: 16.w),
                 Expanded(
                   child: AppButton(
-                    text: actionLabel,
-                    onTap: onAction,
+                    text: primaryLabel,
+                    onTap: onPrimary,
                     containerColor: AppColors.green,
                     fontColor: AppColors.black,
                     height: 45.h,

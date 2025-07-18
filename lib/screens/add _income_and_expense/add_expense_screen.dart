@@ -68,11 +68,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     if (_hasUnsavedData) {
       showDialog(
         context: context,
-        builder: (context) => ExitDialog(
+        builder: (context) => CoustomDialog(
           title: 'Heads up!',
           message: 'If you exit, you\'ll lose any unsaved work.',
-          onCancel: () => Navigator.of(context).pop(),
-          onAction: () {
+          primaryLabel:"Exit", 
+          secondaryLabel: "Cancel",
+          onSecondary: () => Navigator.of(context).pop(),
+          onPrimary: () {
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           },

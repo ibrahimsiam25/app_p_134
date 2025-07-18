@@ -14,9 +14,25 @@ class Assets {
   /// assets/images/Expense.png
   static const String imagesExpense = "assets/images/Expense.png";
 
-  /// Assets for imagesGoalAchieved
-  /// assets/images/goal_achieved.png
-  static const String imagesGoalAchieved = "assets/images/goal_achieved.png";
+  /// Assets for imagesGoalAchieved1
+  /// assets/images/goal_achieved_1.png
+  static const String imagesGoalAchieved1 = "assets/images/goal_achieved_1.png";
+
+  /// Assets for imagesGoalAchieved2
+  /// assets/images/goal_achieved_2.png
+  static const String imagesGoalAchieved2 = "assets/images/goal_achieved_2.png";
+
+  /// Assets for imagesGoalAchieved3
+  /// assets/images/goal_achieved_3.png
+  static const String imagesGoalAchieved3 = "assets/images/goal_achieved_3.png";
+
+  /// Assets for imagesGoalAchieved4
+  /// assets/images/goal_achieved_4.png
+  static const String imagesGoalAchieved4 = "assets/images/goal_achieved_4.png";
+
+  /// Assets for imagesGoalAchieved5
+  /// assets/images/goal_achieved_5.png
+  static const String imagesGoalAchieved5 = "assets/images/goal_achieved_5.png";
 
   /// Assets for imagesGoalInitalAchieved
   /// assets/images/goal_inital_achieved.png
@@ -37,10 +53,6 @@ class Assets {
   /// Assets for imagesTime
   /// assets/images/time.png
   static const String imagesTime = "assets/images/time.png";
-
-  /// Assets for imagesTreeDialog
-  /// assets/images/treeDialog.png
-  static const String imagesTreeDialog = "assets/images/treeDialog.png";
 
   /// Assets for imagesWelcomeImage
   /// assets/images/welcome_image.png
