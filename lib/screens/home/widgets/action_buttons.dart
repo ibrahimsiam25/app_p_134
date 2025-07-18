@@ -3,9 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/assets.dart';
-import '../../add _income_and_expense/add_income_screen.dart';
-
-
 
 class ActionButton extends StatelessWidget {
   final String title;
@@ -69,18 +66,14 @@ class ActionButtons extends StatelessWidget {
             title: 'Add Income  ',
             iconPath: Assets.imagesIncome,
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddIncomeScreen(),
-                ),
-              );
+             Navigator.pushNamed(context,'addIncomeScreen');
             },
           ),
           ActionButton(
             title: 'Add Expense  ',
             iconPath: Assets.imagesExpense,
             onTap: () {
+             Navigator.pushNamed(context,'addExpenseScreen');
               // Navigate to add expense screen
             },
           ),

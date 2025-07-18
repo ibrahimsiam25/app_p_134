@@ -9,7 +9,7 @@ import '../../widgets/custom_snack_bar.dart';
 import '../../widgets/exit_dialog.dart';
 import '../../widgets/price_amount_input.dart';
 import 'widgets/text_input.dart';
-import 'widgets/income_type_selector.dart';
+import 'widgets/transaction_type_selector.dart';
 
 class AddIncomeScreen extends StatefulWidget {
   const AddIncomeScreen({super.key});
@@ -24,7 +24,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _amountFocusNode = FocusNode();
   
-  IncomeType _selectedIncomeType = IncomeType.addToGoal;
+  TransactionType _selectedIncomeType = TransactionType.addToGoal;
   bool _hasGoal = false;
   bool _isLoading = false;
 
@@ -101,7 +101,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
 
       bool success = false;
 
-      if (_hasGoal && _selectedIncomeType == IncomeType.addToGoal) {
+      if (_hasGoal && _selectedIncomeType == TransactionType.addToGoal) {
         // Add to goal
         success = await LocalData.addIncomeToGoal(income);
       } else {
@@ -185,7 +185,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
             
             // Income Type Section (only show if user has a goal)
             if (_hasGoal) ...[
-              IncomeTypeSelector(
+              TransactionTypeSelector(
                 title: 'Type of income',
                 selectedType: _selectedIncomeType,
                 onTypeChanged: (type) {

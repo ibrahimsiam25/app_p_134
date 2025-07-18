@@ -3,13 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 
-enum IncomeType { addToGoal, addToTransactions }
+enum TransactionType { addToGoal, addToTransactions }
 
-class IncomeTypeSelector extends StatelessWidget {
-  final IncomeType selectedType;
-  final ValueChanged<IncomeType> onTypeChanged;
-  final String title ;
-  const IncomeTypeSelector({
+class TransactionTypeSelector extends StatelessWidget {
+  final TransactionType selectedType;
+  final ValueChanged<TransactionType> onTypeChanged;
+  final String title;
+  
+  const TransactionTypeSelector({
     super.key,
     required this.selectedType,
     required this.onTypeChanged,
@@ -33,12 +34,12 @@ class IncomeTypeSelector extends StatelessWidget {
         SizedBox(height: 12.h),
         _buildRadioOption(
           title: 'Add to goal',
-          value: IncomeType.addToGoal,
+          value: TransactionType.addToGoal,
         ),
         SizedBox(height: 12.h),
         _buildRadioOption(
           title: 'Add to transactions',
-          value: IncomeType.addToTransactions,
+          value: TransactionType.addToTransactions,
         ),
       ],
     );
@@ -46,7 +47,7 @@ class IncomeTypeSelector extends StatelessWidget {
 
   Widget _buildRadioOption({
     required String title,
-    required IncomeType value,
+    required TransactionType value,
   }) {
     final isSelected = selectedType == value;
     
