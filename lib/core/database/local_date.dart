@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/goal_model.dart';
-import '../../models/income_model.dart';
-import '../../models/expense_model.dart';
+import '../../models/transaction_model.dart';
 
 class LocalData {
   static late SharedPreferences prefs;
@@ -153,139 +152,96 @@ class LocalData {
     return await deleteCurrentGoal();
   }
 
-  // Income Management Methods
+  // Transaction Management Methods
   
-  // Add income to current goal
-  static Future<bool> addIncomeToGoal(IncomeModel income) async {
+  // Add transaction to current goal
+  static Future<bool> addTransactionToGoal(TransactionModel transaction) async {
     try {
       GoalModel? currentGoal = await getCurrentGoal();
       
       if (currentGoal != null) {
-        List<IncomeModel> updatedIncomes = List.from(currentGoal.incomes);
-        updatedIncomes.add(income);
+        List<TransactionModel> updatedTransactions = List.from(currentGoal.transactions);
+        updatedTransactions.add(transaction);
         
-        GoalModel updatedGoal = currentGoal.copyWith(incomes: updatedIncomes);
+        GoalModel updatedGoal = currentGoal.copyWith(transactions: updatedTransactions);
         return await saveGoal(updatedGoal);
       }
       
       return false;
     } catch (e) {
-      print('Error adding income to goal: $e');
+      print('Error adding transaction to goal: $e');
       return false;
     }
   }
 
-  // Update income in current goal
-  static Future<bool> updateIncomeInGoal(IncomeModel updatedIncome) async {
+  // Add income to current goal (using unified transaction model)
+  static Future<bool> addIncomeToGoal(TransactionModel income) async {
+    return await addTransactionToGoal(income);
+  }
+
+  // Add expense to current goal (using unified transaction model)
+  static Future<bool> addExpenseToGoal(TransactionModel expense) async {
+    return await addTransactionToGoal(expense);
+  }
+
+  // Update transaction in current goal
+  static Future<bool> updateTransactionInGoal(TransactionModel updatedTransaction) async {
     try {
       GoalModel? currentGoal = await getCurrentGoal();
       
       if (currentGoal != null) {
-        List<IncomeModel> updatedIncomes = currentGoal.incomes.map((income) {
-          return income.id == updatedIncome.id ? updatedIncome : income;
+        List<TransactionModel> updatedTransactions = currentGoal.transactions.map((transaction) {
+          return transaction.id == updatedTransaction.id ? updatedTransaction : transaction;
         }).toList();
         
-        GoalModel updatedGoal = currentGoal.copyWith(incomes: updatedIncomes);
+        GoalModel updatedGoal = currentGoal.copyWith(transactions: updatedTransactions);
         return await saveGoal(updatedGoal);
       }
       
       return false;
     } catch (e) {
-      print('Error updating income in goal: $e');
+      print('Error updating transaction in goal: $e');
       return false;
     }
   }
 
-  // Remove income from current goal
-  static Future<bool> removeIncomeFromGoal(String incomeId) async {
+  // Remove transaction from current goal
+  static Future<bool> removeTransactionFromGoal(String transactionId) async {
     try {
       GoalModel? currentGoal = await getCurrentGoal();
       
       if (currentGoal != null) {
-        List<IncomeModel> updatedIncomes = currentGoal.incomes
-            .where((income) => income.id != incomeId)
+        List<TransactionModel> updatedTransactions = currentGoal.transactions
+            .where((transaction) => transaction.id != transactionId)
             .toList();
         
-        GoalModel updatedGoal = currentGoal.copyWith(incomes: updatedIncomes);
+        GoalModel updatedGoal = currentGoal.copyWith(transactions: updatedTransactions);
         return await saveGoal(updatedGoal);
       }
       
       return false;
     } catch (e) {
-      print('Error removing income from goal: $e');
+      print('Error removing transaction from goal: $e');
       return false;
     }
   }
 
-  // Expense Management Methods
-  
-  // Add expense to current goal
-  static Future<bool> addExpenseToGoal(ExpenseModel expense) async {
+  // Get all transactions from current goal
+  static Future<List<TransactionModel>> getTransactionsFromGoal() async {
     try {
       GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        List<ExpenseModel> updatedExpenses = List.from(currentGoal.expenses);
-        updatedExpenses.add(expense);
-        
-        GoalModel updatedGoal = currentGoal.copyWith(expenses: updatedExpenses);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
+      return currentGoal?.transactions ?? [];
     } catch (e) {
-      print('Error adding expense to goal: $e');
-      return false;
-    }
-  }
-
-  // Update expense in current goal
-  static Future<bool> updateExpenseInGoal(ExpenseModel updatedExpense) async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        List<ExpenseModel> updatedExpenses = currentGoal.expenses.map((expense) {
-          return expense.id == updatedExpense.id ? updatedExpense : expense;
-        }).toList();
-        
-        GoalModel updatedGoal = currentGoal.copyWith(expenses: updatedExpenses);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
-    } catch (e) {
-      print('Error updating expense in goal: $e');
-      return false;
-    }
-  }
-
-  // Remove expense from current goal
-  static Future<bool> removeExpenseFromGoal(String expenseId) async {
-    try {
-      GoalModel? currentGoal = await getCurrentGoal();
-      
-      if (currentGoal != null) {
-        List<ExpenseModel> updatedExpenses = currentGoal.expenses
-            .where((expense) => expense.id != expenseId)
-            .toList();
-        
-        GoalModel updatedGoal = currentGoal.copyWith(expenses: updatedExpenses);
-        return await saveGoal(updatedGoal);
-      }
-      
-      return false;
-    } catch (e) {
-      print('Error removing expense from goal: $e');
-      return false;
+      print('Error getting transactions from goal: $e');
+      return [];
     }
   }
 
   // Get all incomes from current goal
-  static Future<List<IncomeModel>> getIncomesFromGoal() async {
+  static Future<List<TransactionModel>> getIncomesFromGoal() async {
     try {
       GoalModel? currentGoal = await getCurrentGoal();
-      return currentGoal?.incomes ?? [];
+      return currentGoal?.transactions.where((t) => t.isIncome).toList() ?? [];
     } catch (e) {
       print('Error getting incomes from goal: $e');
       return [];
@@ -293,14 +249,31 @@ class LocalData {
   }
 
   // Get all expenses from current goal
-  static Future<List<ExpenseModel>> getExpensesFromGoal() async {
+  static Future<List<TransactionModel>> getExpensesFromGoal() async {
     try {
       GoalModel? currentGoal = await getCurrentGoal();
-      return currentGoal?.expenses ?? [];
+      return currentGoal?.transactions.where((t) => t.isExpense).toList() ?? [];
     } catch (e) {
       print('Error getting expenses from goal: $e');
       return [];
     }
+  }
+
+  // Legacy methods for backward compatibility
+  static Future<bool> updateIncomeInGoal(TransactionModel updatedIncome) async {
+    return await updateTransactionInGoal(updatedIncome);
+  }
+
+  static Future<bool> updateExpenseInGoal(TransactionModel updatedExpense) async {
+    return await updateTransactionInGoal(updatedExpense);
+  }
+
+  static Future<bool> removeIncomeFromGoal(String incomeId) async {
+    return await removeTransactionFromGoal(incomeId);
+  }
+
+  static Future<bool> removeExpenseFromGoal(String expenseId) async {
+    return await removeTransactionFromGoal(expenseId);
   }
 
   // Get goal progress information
@@ -309,16 +282,19 @@ class LocalData {
       GoalModel? currentGoal = await getCurrentGoal();
       
       if (currentGoal != null) {
+        List<TransactionModel> incomes = currentGoal.transactions.where((t) => t.isIncome).toList();
+        List<TransactionModel> expenses = currentGoal.transactions.where((t) => t.isExpense).toList();
+        
         return {
           'goalAmount': currentGoal.amount,
           'currentAmount': currentGoal.currentAmount,
           'remainingAmount': currentGoal.remainingAmount,
           'progressPercentage': currentGoal.progressPercentage,
           'isAchieved': currentGoal.isAchieved,
-          'totalIncomes': currentGoal.incomes.fold(0.0, (sum, income) => sum + income.amount),
-          'totalExpenses': currentGoal.expenses.fold(0.0, (sum, expense) => sum + expense.amount),
-          'incomesCount': currentGoal.incomes.length,
-          'expensesCount': currentGoal.expenses.length,
+          'totalIncomes': incomes.fold(0.0, (sum, income) => sum + income.amount),
+          'totalExpenses': expenses.fold(0.0, (sum, expense) => sum + expense.amount),
+          'incomesCount': incomes.length,
+          'expensesCount': expenses.length,
         };
       }
       

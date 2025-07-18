@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/database/local_date.dart';
-import '../../models/expense_model.dart';
+import '../../models/transaction_model.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/custom_snack_bar.dart';
 import '../../widgets/exit_dialog.dart';
@@ -92,7 +92,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     try {
       final amount = double.parse(_expenseAmountController.text);
-      final expense = ExpenseModel(
+      final expense = TransactionModel.expense(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: _expenseNameController.text,
         amount: amount,

@@ -6,24 +6,29 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:app_p_134/dependencies.dart';
+import 'package:app_p_134/core/database/local_date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('App launches without error', (WidgetTester tester) async {
+    // Initialize SharedPreferences for tests
+    SharedPreferences.setMockInitialValues({});
+    
+    // Initialize LocalData
+    await LocalData.initLocalService();
+    
     // Build our app and trigger a frame.
     await tester.pumpWidget(const Application());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the app builds without error
+    expect(find.byType(MaterialApp), findsOneWidget);
+    
+    // Wait for initial navigation
+    await tester.pump(const Duration(seconds: 4));
+    
+    // The app should navigate to welcome screen on first launch
+    expect(find.byType(MaterialApp), findsOneWidget);
   });
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/database/local_date.dart';
-import '../../models/income_model.dart';
+import '../../models/transaction_model.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/custom_snack_bar.dart';
 import '../../widgets/exit_dialog.dart';
@@ -92,7 +92,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
 
     try {
       final amount = double.parse(_incomeAmountController.text);
-      final income = IncomeModel(
+      final income = TransactionModel.income(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: _incomeNameController.text,
         amount: amount,

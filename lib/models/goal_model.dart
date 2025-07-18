@@ -1,5 +1,4 @@
-import 'income_model.dart';
-import 'expense_model.dart';
+import 'transaction_model.dart';
 
 class GoalModel {
   final String id;
@@ -7,8 +6,7 @@ class GoalModel {
   final DateTime? deadline;
   final DateTime createdAt;
   final bool isCompleted;
-  final List<IncomeModel> incomes;
-  final List<ExpenseModel> expenses;
+  final List<TransactionModel> transactions;
 
   GoalModel({
     required this.id,
@@ -16,14 +14,17 @@ class GoalModel {
     this.deadline,
     required this.createdAt,
     this.isCompleted = false,
-    this.incomes = const [],
-    this.expenses = const [],
+    this.transactions = const [],
   });
 
   // Calculate current saved amount (incomes - expenses)
   double get currentAmount {
-    double totalIncome = incomes.fold(0.0, (sum, income) => sum + income.amount);
-    double totalExpense = expenses.fold(0.0, (sum, expense) => sum + expense.amount);
+    double totalIncome = transactions
+        .where((t) => t.isIncome)
+        .fold(0.0, (sum, transaction) => sum + transaction.amount);
+    double totalExpense = transactions
+        .where((t) => t.isExpense)
+        .fold(0.0, (sum, transaction) => sum + transaction.amount);
     return totalIncome - totalExpense;
   }
 
@@ -53,26 +54,33 @@ class GoalModel {
       'deadline': deadline?.millisecondsSinceEpoch,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'isCompleted': isCompleted,
-      'incomes': incomes.map((income) => income.toJson()).toList(),
-      'expenses': expenses.map((expense) => expense.toJson()).toList(),
+      'transactions': transactions.map((transaction) => transaction.toJson()).toList(),
     };
   }
 
   // Create GoalModel from Map
   factory GoalModel.fromJson(Map<String, dynamic> json) {
-    List<IncomeModel> incomesList = [];
-    List<ExpenseModel> expensesList = [];
+    List<TransactionModel> transactionsList = [];
 
-    if (json['incomes'] != null) {
-      incomesList = (json['incomes'] as List)
-          .map((incomeJson) => IncomeModel.fromJson(incomeJson))
+    // Handle new format with transactions
+    if (json['transactions'] != null) {
+      transactionsList = (json['transactions'] as List)
+          .map((transactionJson) => TransactionModel.fromJson(transactionJson))
           .toList();
-    }
+    } 
+    // Handle legacy format with separate incomes and expenses
+    else {
+      if (json['incomes'] != null) {
+        transactionsList.addAll((json['incomes'] as List)
+            .map((incomeJson) => TransactionModel.fromIncome(incomeJson))
+            .toList());
+      }
 
-    if (json['expenses'] != null) {
-      expensesList = (json['expenses'] as List)
-          .map((expenseJson) => ExpenseModel.fromJson(expenseJson))
-          .toList();
+      if (json['expenses'] != null) {
+        transactionsList.addAll((json['expenses'] as List)
+            .map((expenseJson) => TransactionModel.fromExpense(expenseJson))
+            .toList());
+      }
     }
 
     return GoalModel(
@@ -83,8 +91,7 @@ class GoalModel {
           : null,
       createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
       isCompleted: json['isCompleted'] ?? false,
-      incomes: incomesList,
-      expenses: expensesList,
+      transactions: transactionsList,
     );
   }
 
@@ -95,8 +102,7 @@ class GoalModel {
     DateTime? deadline,
     DateTime? createdAt,
     bool? isCompleted,
-    List<IncomeModel>? incomes,
-    List<ExpenseModel>? expenses,
+    List<TransactionModel>? transactions,
   }) {
     return GoalModel(
       id: id ?? this.id,
@@ -104,14 +110,15 @@ class GoalModel {
       deadline: deadline ?? this.deadline,
       createdAt: createdAt ?? this.createdAt,
       isCompleted: isCompleted ?? this.isCompleted,
-      incomes: incomes ?? this.incomes,
-      expenses: expenses ?? this.expenses,
+      transactions: transactions ?? this.transactions,
     );
   }
 
   @override
   String toString() {
-    return 'GoalModel(id: $id, amount: $amount, deadline: $deadline, createdAt: $createdAt, isCompleted: $isCompleted, incomes: ${incomes.length}, expenses: ${expenses.length})';
+    int incomeCount = transactions.where((t) => t.isIncome).length;
+    int expenseCount = transactions.where((t) => t.isExpense).length;
+    return 'GoalModel(id: $id, amount: $amount, deadline: $deadline, createdAt: $createdAt, isCompleted: $isCompleted, incomes: $incomeCount, expenses: $expenseCount)';
   }
 
   @override

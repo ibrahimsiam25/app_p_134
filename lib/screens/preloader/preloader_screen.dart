@@ -11,20 +11,30 @@ class PreloaderScreen extends StatefulWidget {
 }
 
 class _PreloaderScreenState extends State<PreloaderScreen> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
     _navigateToNextScreen();
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _navigateToNextScreen() async {
-    Timer(const Duration(seconds: 3), () {
-      if (LocalData.prefs.getBool('isFirstLaunch') != null) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, 'homeScreen', (context) => false);
-      } else {
-        Navigator.pushNamedAndRemoveUntil(
-            context, 'welcomeScreen', (context) => false);
+    _timer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        if (LocalData.prefs.getBool('isFirstLaunch') != null) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, 'homeScreen', (context) => false);
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context, 'welcomeScreen', (context) => false);
+        }
       }
     });
   }
