@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
-import '../../cubit/addIncomeCubit/add_income_cubit.dart';
-import '../../cubit/addIncomeCubit/add_income_state.dart';
+import '../../cubit/transactionFormCubit/transaction_form_cubit.dart';
+import '../../cubit/transactionFormCubit/transaction_form_state.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/custom_snack_bar.dart';
 import '../../widgets/coustom_dialog.dart';
@@ -34,7 +34,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
     super.dispose();
   }
 
-  void _onBackPressed(AddIncomeState state) {
+  void _onBackPressed(TransactionFormState state) {
     if (state.hasUnsavedData) {
       showDialog(
         context: context,
@@ -58,17 +58,17 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AddIncomeCubit()..initialize(),
-      child: BlocConsumer<AddIncomeCubit, AddIncomeState>(
+      create: (context) => TransactionFormCubit(TransactionFormType.income)..initialize(),
+      child: BlocConsumer<TransactionFormCubit, TransactionFormState>(
         listener: (context, state) {
-          if (state is AddIncomeSuccessState) {
+          if (state is TransactionFormSuccessState) {
             CustomSnackBar.show(
               context,
               message: 'Income added successfully!',
               isSuccess: true,
             );
             Navigator.of(context).pop();
-          } else if (state is AddIncomeErrorState) {
+          } else if (state is TransactionFormErrorState) {
             CustomSnackBar.show(
               context,
               message: state.errorMessage,
@@ -97,7 +97,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
                     controller: _incomeNameController,
                     focusNode: _nameFocusNode,
                     onChanged: () {
-                      context.read<AddIncomeCubit>().updateIncomeName(_incomeNameController.text);
+                      context.read<TransactionFormCubit>().updateTransactionName(_incomeNameController.text);
                     },
                   ),
 
@@ -107,7 +107,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
                     title: 'Enter income amount',
                     controller: _incomeAmountController,
                     focusNode: _amountFocusNode,
-                    onChanged: () => context.read<AddIncomeCubit>().updateIncomeAmount(_incomeAmountController.text),
+                    onChanged: () => context.read<TransactionFormCubit>().updateTransactionAmount(_incomeAmountController.text),
                   ),
                   
                   SizedBox(height: 12.h),
@@ -115,9 +115,9 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
                   if (state.hasGoal) ...[
                     TransactionTypeSelector(
                       title: 'Type of income',
-                      selectedType: state.selectedIncomeType,
+                      selectedType: state.selectedTransactionType,
                       onTypeChanged: (type) {
-                        context.read<AddIncomeCubit>().updateSelectedIncomeType(type);
+                        context.read<TransactionFormCubit>().updateSelectedTransactionType(type);
                       },
                     ),
                     SizedBox(height: 40.h),
@@ -127,7 +127,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
                   
                   AppButton(
                     text: state.isLoading ? 'Saving...' : 'Save',
-                    onTap: (state.isFormValid && !state.isLoading) ? () => context.read<AddIncomeCubit>().saveIncome() : null,
+                    onTap: (state.isFormValid && !state.isLoading) ? () => context.read<TransactionFormCubit>().saveTransaction() : null,
                     containerColor: (state.isFormValid && !state.isLoading) ? AppColors.green : AppColors.white,
                     fontColor: (state.isFormValid && !state.isLoading) ? AppColors.blackLight : AppColors.gray,
                     borderColor: (state.isFormValid && !state.isLoading) ? null : AppColors.gray,

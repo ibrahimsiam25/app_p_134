@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
-import '../../cubit/addExpenseCubit/add_expense_cubit.dart';
-import '../../cubit/addExpenseCubit/add_expense_state.dart';
+import '../../cubit/transactionFormCubit/transaction_form_cubit.dart';
+import '../../cubit/transactionFormCubit/transaction_form_state.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/custom_snack_bar.dart';
 import '../../widgets/coustom_dialog.dart';
@@ -34,7 +34,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     super.dispose();
   }
 
-  void _onBackPressed(AddExpenseState state) {
+  void _onBackPressed(TransactionFormState state) {
     if (state.hasUnsavedData) {
       showDialog(
         context: context,
@@ -58,17 +58,17 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AddExpenseCubit()..initialize(),
-      child: BlocConsumer<AddExpenseCubit, AddExpenseState>(
+      create: (context) => TransactionFormCubit(TransactionFormType.expense)..initialize(),
+      child: BlocConsumer<TransactionFormCubit, TransactionFormState>(
         listener: (context, state) {
-          if (state is AddExpenseSuccessState) {
+          if (state is TransactionFormSuccessState) {
             CustomSnackBar.show(
               context,
               message: 'Expense added successfully!',
               isSuccess: true,
             );
             Navigator.of(context).pop();
-          } else if (state is AddExpenseErrorState) {
+          } else if (state is TransactionFormErrorState) {
             CustomSnackBar.show(
               context,
               message: state.errorMessage,
@@ -97,7 +97,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     controller: _expenseNameController,
                     focusNode: _nameFocusNode,
                     onChanged: () {
-                      context.read<AddExpenseCubit>().updateExpenseName(_expenseNameController.text);
+                      context.read<TransactionFormCubit>().updateTransactionName(_expenseNameController.text);
                     },
                   ),
 
@@ -107,7 +107,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     title: 'Enter expense amount',
                     controller: _expenseAmountController,
                     focusNode: _amountFocusNode,
-                    onChanged: () => context.read<AddExpenseCubit>().updateExpenseAmount(_expenseAmountController.text),
+                    onChanged: () => context.read<TransactionFormCubit>().updateTransactionAmount(_expenseAmountController.text),
                   ),
                   
                   SizedBox(height: 12.h),
@@ -115,9 +115,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   if (state.hasGoal) ...[
                     TransactionTypeSelector(
                       title: 'Type of expense',
-                      selectedType: state.selectedExpenseType,
+                      selectedType: state.selectedTransactionType,
                       onTypeChanged: (type) {
-                        context.read<AddExpenseCubit>().updateSelectedExpenseType(type);
+                        context.read<TransactionFormCubit>().updateSelectedTransactionType(type);
                       },
                     ),
                     SizedBox(height: 40.h),
@@ -127,7 +127,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   
                   AppButton(
                     text: state.isLoading ? 'Saving...' : 'Save',
-                    onTap: (state.isFormValid && !state.isLoading) ? () => context.read<AddExpenseCubit>().saveExpense() : null,
+                    onTap: (state.isFormValid && !state.isLoading) ? () => context.read<TransactionFormCubit>().saveTransaction() : null,
                     containerColor: (state.isFormValid && !state.isLoading) ? AppColors.green : AppColors.white,
                     fontColor: (state.isFormValid && !state.isLoading) ? AppColors.blackLight : AppColors.gray,
                     borderColor: (state.isFormValid && !state.isLoading) ? null : AppColors.gray,
