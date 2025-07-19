@@ -4,7 +4,6 @@ abstract class GoalState {
   const GoalState();
 }
 
-
 class NoGoalState extends GoalState {
   const NoGoalState();
 }
@@ -19,6 +18,18 @@ class InProgressGoalState extends GoalState {
     required this.currentAmount,
     required this.progressPercentage,
   });
+
+  InProgressGoalState copyWith({
+    GoalModel? goal,
+    double? currentAmount,
+    double? progressPercentage,
+  }) {
+    return InProgressGoalState(
+      goal: goal ?? this.goal,
+      currentAmount: currentAmount ?? this.currentAmount,
+      progressPercentage: progressPercentage ?? this.progressPercentage,
+    );
+  }
 }
 
 class GoalAchievedState extends GoalState {
@@ -31,6 +42,18 @@ class GoalAchievedState extends GoalState {
     required this.currentAmount,
     required this.isFirstTimeAchieved,
   });
+
+  GoalAchievedState copyWith({
+    GoalModel? goal,
+    double? currentAmount,
+    bool? isFirstTimeAchieved,
+  }) {
+    return GoalAchievedState(
+      goal: goal ?? this.goal,
+      currentAmount: currentAmount ?? this.currentAmount,
+      isFirstTimeAchieved: isFirstTimeAchieved ?? this.isFirstTimeAchieved,
+    );
+  }
 }
 
 class GoalFailedState extends GoalState {
@@ -45,4 +68,18 @@ class GoalFailedState extends GoalState {
     required this.progressPercentage,
     required this.isFirstTimeFailure,
   });
+
+  GoalFailedState copyWith({
+    GoalModel? goal,
+    double? currentAmount,
+    double? progressPercentage,
+    bool? isFirstTimeFailure,
+  }) {
+    return GoalFailedState(
+      goal: goal ?? this.goal,
+      currentAmount: currentAmount ?? this.currentAmount,
+      progressPercentage: progressPercentage ?? this.progressPercentage,
+      isFirstTimeFailure: isFirstTimeFailure ?? this.isFirstTimeFailure,
+    );
+  }
 }
