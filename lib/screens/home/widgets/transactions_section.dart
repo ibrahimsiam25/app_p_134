@@ -70,10 +70,6 @@ class _TransactionsSectionState extends State<TransactionsSection> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-  
-      constraints: BoxConstraints(
-        minHeight: MediaQuery.of(context).size.height * 0.4, 
-      ),
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -82,7 +78,6 @@ class _TransactionsSectionState extends State<TransactionsSection> {
         ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, 
         children: [
           // الـ header
           Padding(
@@ -123,33 +118,35 @@ class _TransactionsSectionState extends State<TransactionsSection> {
             ),
           ),
           
-       
-          Padding(
-            padding: EdgeInsets.fromLTRB(26.w, 0, 26.w, 30.h),
-            child: Column(
-              children: [
-                if (isLoading)
-                  const Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: CircularProgressIndicator(
-                      color: AppColors.darkPurple,
-                    ),
-                  )
-                else if (recentTransactions.isEmpty)
-                  TransactionItem(
-                    title: 'Example entry',
-                    date: formatDate(DateTime.now()),
-                    amount: "\$ +0,01",
-                    isIncome: true,
-                  )
-                else
-                  ...recentTransactions.map((transaction) => TransactionItem(
-                        title: transaction.name,
-                        date: formatDate(transaction.date),
-                        amount: formatAmount(transaction),
-                        isIncome: transaction.isIncome,
-                      )),
-              ],
+          // Scrollable content area
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(26.w, 0, 26.w, 30.h),
+              child: Column(
+                children: [
+                  if (isLoading)
+                    const Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: CircularProgressIndicator(
+                        color: AppColors.darkPurple,
+                      ),
+                    )
+                  else if (recentTransactions.isEmpty)
+                    TransactionItem(
+                      title: 'Example entry',
+                      date: formatDate(DateTime.now()),
+                      amount: "\$ +0,01",
+                      isIncome: true,
+                    )
+                  else
+                    ...recentTransactions.map((transaction) => TransactionItem(
+                          title: transaction.name,
+                          date: formatDate(transaction.date),
+                          amount: formatAmount(transaction),
+                          isIncome: transaction.isIncome,
+                        )),
+                ],
+              ),
             ),
           ),
         ],
