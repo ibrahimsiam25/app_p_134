@@ -18,7 +18,6 @@ class AddExpenseScreen extends StatefulWidget {
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
 }
-
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final TextEditingController _expenseNameController = TextEditingController();
   final TextEditingController _expenseAmountController = TextEditingController();

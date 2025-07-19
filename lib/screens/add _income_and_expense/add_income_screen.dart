@@ -18,7 +18,6 @@ class AddIncomeScreen extends StatefulWidget {
   @override
   State<AddIncomeScreen> createState() => _AddIncomeScreenState();
 }
-
 class _AddIncomeScreenState extends State<AddIncomeScreen> {
   final TextEditingController _incomeNameController = TextEditingController();
   final TextEditingController _incomeAmountController = TextEditingController();

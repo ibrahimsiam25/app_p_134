@@ -39,17 +39,12 @@ class SettingsScreen extends StatelessWidget {
 
   Future<void> _clearAllData(BuildContext context) async {
     try {
-      // Clear current goal data (this will automatically notify listeners)
       await LocalData.deleteCurrentGoal();
-      
-      // Clear all transactions data
       await LocalData.clearAllTransactions();
-      
-      // Refresh the GoalCubit state
       if (context.mounted) {
         context.read<GoalCubit>().refreshState();
       }
-      Navigator.of(context).pop(); // Close the settings screen
+      Navigator.of(context).pop();
       CustomSnackBar.show(
         context,
         message: 'All data cleared successfully!',
