@@ -4,12 +4,11 @@ abstract class GoalState {
   const GoalState();
 }
 
-// When no goal is created yet
+
 class NoGoalState extends GoalState {
   const NoGoalState();
 }
 
-// When a goal is in progress (not yet achieved or failed)
 class InProgressGoalState extends GoalState {
   final GoalModel goal;
   final double currentAmount;
@@ -22,7 +21,6 @@ class InProgressGoalState extends GoalState {
   });
 }
 
-// When the goal is achieved before the deadline
 class GoalAchievedState extends GoalState {
   final GoalModel goal;
   final double currentAmount;
@@ -35,7 +33,6 @@ class GoalAchievedState extends GoalState {
   });
 }
 
-// When the deadline is passed and goalAmount is not reached
 class GoalFailedState extends GoalState {
   final GoalModel goal;
   final double currentAmount;

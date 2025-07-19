@@ -13,18 +13,18 @@ class GoalCubit extends Cubit<GoalState> {
   }
 
   void _initializeCubit() {
-    // Listen to transactions changes
+  
     _transactionsSubscription = LocalData.transactionsStream.listen((_) {
       _updateGoalState();
     });
     
-    // Initial state check
+
     _updateGoalState();
   }
 
   Future<void> _updateGoalState() async {
     try {
-      // Get current goal
+     
       GoalModel? goal = await LocalData.getCurrentGoal();
       
       if (goal == null) {
@@ -32,24 +32,22 @@ class GoalCubit extends Cubit<GoalState> {
         return;
       }
 
-      // Get current amount (balance)
+  
       double currentAmount = await LocalData.getCurrentAmount();
-      
-      // Calculate progress percentage
+  
       double progressPercentage = goal.calculateProgressPercentage(currentAmount);
       
-      // Check if goal is achieved
+   
       bool isAchieved = goal.isAchievedWith(currentAmount);
    
-      // Check if goal is failed (deadline passed and not achieved)
       bool isDeadlinePassed = goal.deadline != null && 
                              DateTime.now().isAfter(goal.deadline!);
       
       if (isAchieved) {
-        // Check if this is the first time achievement (goal hasn't shown success dialog yet)
+       
         bool isFirstTimeAchieved = !goal.hasShownSuccessDialog;
         
-        // If it's first time achieved, update the goal to mark success dialog as shown
+       
         if (isFirstTimeAchieved) {
           GoalModel updatedGoal = goal.copyWith(hasShownSuccessDialog: true);
           await LocalData.saveGoal(updatedGoal);
@@ -61,10 +59,10 @@ class GoalCubit extends Cubit<GoalState> {
           isFirstTimeAchieved: isFirstTimeAchieved,
         ));
       } else if (isDeadlinePassed) {
-        // Check if this is the first time failure (goal hasn't shown failure dialog yet)
+     
         bool isFirstTimeFailure = !goal.hasShownFailureDialog;
         
-        // If it's first time failed, update the goal to mark failure dialog as shown
+
         if (isFirstTimeFailure) {
           GoalModel updatedGoal = goal.copyWith(hasShownFailureDialog: true);
           await LocalData.saveGoal(updatedGoal);
@@ -88,7 +86,7 @@ class GoalCubit extends Cubit<GoalState> {
     }
   }
 
-  // Force refresh the state (useful after creating/updating goals)
+
   Future<void> refreshState() async {
     await _updateGoalState();
   }

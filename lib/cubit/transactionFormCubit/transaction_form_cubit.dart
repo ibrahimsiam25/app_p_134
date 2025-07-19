@@ -13,7 +13,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
       final hasGoal = await LocalData.hasGoal();
       emit(state.copyWith(hasGoal: hasGoal));
     } catch (e) {
-      
+      // Handle error silently
     }
   }
 
