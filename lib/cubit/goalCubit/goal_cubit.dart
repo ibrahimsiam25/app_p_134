@@ -46,9 +46,19 @@ class GoalCubit extends Cubit<GoalState> {
                              DateTime.now().isAfter(goal.deadline!);
       
       if (isAchieved) {
+        // Check if this is the first time achievement (goal hasn't shown success dialog yet)
+        bool isFirstTimeAchieved = !goal.hasShownSuccessDialog;
+        
+        // If it's first time achieved, update the goal to mark success dialog as shown
+        if (isFirstTimeAchieved) {
+          GoalModel updatedGoal = goal.copyWith(hasShownSuccessDialog: true);
+          await LocalData.saveGoal(updatedGoal);
+        }
+        
         emit(GoalAchievedState(
           goal: goal,
           currentAmount: currentAmount,
+          isFirstTimeAchieved: isFirstTimeAchieved,
         ));
       } else if (isDeadlinePassed) {
         emit(GoalFailedState(

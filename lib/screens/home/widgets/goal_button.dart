@@ -9,14 +9,34 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/database/local_date.dart';
 
 
-class GoalButton extends StatelessWidget {
+class GoalButton extends StatefulWidget {
   final GoalState state;
 
   const GoalButton({super.key, required this.state});
 
   @override
+  State<GoalButton> createState() => _GoalButtonState();
+}
+
+class _GoalButtonState extends State<GoalButton> {
+
+  @override
+  void didUpdateWidget(GoalButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Show success dialog automatically if this is the first time achieving the goal
+    if (widget.state is GoalAchievedState) {
+      final achievedState = widget.state as GoalAchievedState;
+      if (achievedState.isFirstTimeAchieved) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showSuccessDialog(context);
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (state is NoGoalState) {
+    if (widget.state is NoGoalState) {
       // Show "Create a goal" button
       return _buildActionButton(
         context: context,
@@ -25,14 +45,14 @@ class GoalButton extends StatelessWidget {
           Navigator.pushNamed(context, 'createGoalScreen');
         },
       );
-    } else if (state is GoalAchievedState) {
+    } else if (widget.state is GoalAchievedState) {
       return _buildActionButton(
         context: context,
         text: 'Create new goal',
         onTap: () => _showSuccessDialog(context),
       );
-    } else if (state is GoalFailedState) {
-      final failedState = state as GoalFailedState; // Cast to GoalFailedState
+    } else if (widget.state is GoalFailedState) {
+      final failedState = widget.state as GoalFailedState; // Cast to GoalFailedState
       // Show "Change a goal" button
       return _buildActionButton(
         context: context,

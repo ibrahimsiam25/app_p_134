@@ -26,10 +26,12 @@ class InProgressGoalState extends GoalState {
 class GoalAchievedState extends GoalState {
   final GoalModel goal;
   final double currentAmount;
+  final bool isFirstTimeAchieved;
 
   const GoalAchievedState({
     required this.goal,
     required this.currentAmount,
+    required this.isFirstTimeAchieved,
   });
 }
 

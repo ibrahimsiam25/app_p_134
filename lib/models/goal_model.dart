@@ -4,6 +4,7 @@ class GoalModel {
   final DateTime? deadline;
   final DateTime createdAt;
   final bool isCompleted;
+  final bool hasShownSuccessDialog;
 
   GoalModel({
     required this.id,
@@ -11,6 +12,7 @@ class GoalModel {
     this.deadline,
     required this.createdAt,
     this.isCompleted = false,
+    this.hasShownSuccessDialog = false,
   });
 
   // Calculate progress percentage based on current saved amount
@@ -39,6 +41,7 @@ class GoalModel {
       'deadline': deadline?.millisecondsSinceEpoch,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'isCompleted': isCompleted,
+      'hasShownSuccessDialog': hasShownSuccessDialog,
     };
   }
 
@@ -52,6 +55,7 @@ class GoalModel {
           : null,
       createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
       isCompleted: json['isCompleted'] ?? false,
+      hasShownSuccessDialog: json['hasShownSuccessDialog'] ?? false,
     );
   }
 
@@ -62,6 +66,7 @@ class GoalModel {
     DateTime? deadline,
     DateTime? createdAt,
     bool? isCompleted,
+    bool? hasShownSuccessDialog,
   }) {
     return GoalModel(
       id: id ?? this.id,
@@ -69,6 +74,7 @@ class GoalModel {
       deadline: deadline ?? this.deadline,
       createdAt: createdAt ?? this.createdAt,
       isCompleted: isCompleted ?? this.isCompleted,
+      hasShownSuccessDialog: hasShownSuccessDialog ?? this.hasShownSuccessDialog,
     );
   }
 
