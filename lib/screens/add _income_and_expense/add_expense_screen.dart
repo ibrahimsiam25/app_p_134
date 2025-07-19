@@ -1,9 +1,10 @@
 import 'package:app_p_134/widgets/custom_back_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/database/local_date.dart';
-import '../../models/transaction_model.dart';
+import '../../cubit/addExpenseCubit/add_expense_cubit.dart';
+import '../../cubit/addExpenseCubit/add_expense_state.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/custom_snack_bar.dart';
 import '../../widgets/coustom_dialog.dart';
@@ -23,16 +24,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final TextEditingController _expenseAmountController = TextEditingController();
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _amountFocusNode = FocusNode();
-  
-  TransactionType _selectedExpenseType = TransactionType.addToGoal;
-  bool _hasGoal = false;
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkForExistingGoal();
-  }
 
   @override
   void dispose() {
@@ -43,35 +34,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     super.dispose();
   }
 
-  Future<void> _checkForExistingGoal() async {
-    try {
-      final hasGoal = await LocalData.hasGoal();
-      setState(() {
-        _hasGoal = hasGoal;
-      });
-    } catch (e) {
-      // Handle error silently
-    }
-  }
-
-  bool get _isFormValid {
-    return _expenseNameController.text.isNotEmpty &&
-           _expenseAmountController.text.isNotEmpty;
-  }
-
-  bool get _hasUnsavedData {
-    return _expenseNameController.text.isNotEmpty ||
-           _expenseAmountController.text.isNotEmpty;
-  }
-
-  void _onBackPressed() {
-    if (_hasUnsavedData) {
+  void _onBackPressed(AddExpenseState state) {
+    if (state.hasUnsavedData) {
       showDialog(
         context: context,
         builder: (context) => CoustomDialog(
           title: 'Heads up!',
           message: 'If you exit, you\'ll lose any unsaved work.',
-          primaryLabel:"Exit", 
+          primaryLabel: "Exit",
           secondaryLabel: "Cancel",
           onSecondary: () => Navigator.of(context).pop(),
           onPrimary: () {
@@ -85,131 +55,92 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     }
   }
 
-  Future<void> _saveExpense() async {
-    if (!_isFormValid) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-     
-      final amount = double.parse(_expenseAmountController.text);
-      final expense = TransactionModel.expense(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _expenseNameController.text,
-        amount: amount,
-        date: DateTime.now(),
-        isFromCurrentGoal: (_selectedExpenseType == TransactionType.addToGoal)&&_hasGoal, 
-      );
-
-      bool success = false;
-
-    success = await LocalData.addExpense(expense);
-
-      if (success) {
-        if (mounted) {
-          CustomSnackBar.show(
-            context,
-            message: 'Expense added successfully!',
-            isSuccess: true,
-          );
-          Navigator.of(context).pop();
-        }
-      } else {
-        if (mounted) {
-          CustomSnackBar.show(
-            context,
-            message: 'Failed to add expense. Please try again.',
-            isError: true,
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        CustomSnackBar.show(
-          context,
-          message: 'Please enter a valid amount.',
-          isError: true,
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.white,
-      appBar: CustomBackAppBar(
-        title: 'Add Expense',
-        onBackPressed: _onBackPressed,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 16.h),
-            
-            TextInput(
-              title: 'Enter expense name',
-              hintText: 'Name',
-              controller: _expenseNameController,
-              focusNode: _nameFocusNode,
-              onChanged: () {
-                setState(() {});  
-              },
+    return BlocProvider(
+      create: (context) => AddExpenseCubit()..initialize(),
+      child: BlocConsumer<AddExpenseCubit, AddExpenseState>(
+        listener: (context, state) {
+          if (state is AddExpenseSuccessState) {
+            CustomSnackBar.show(
+              context,
+              message: 'Expense added successfully!',
+              isSuccess: true,
+            );
+            Navigator.of(context).pop();
+          } else if (state is AddExpenseErrorState) {
+            CustomSnackBar.show(
+              context,
+              message: state.errorMessage,
+              isError: true,
+            );
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: AppColors.white,
+            appBar: CustomBackAppBar(
+              title: 'Add Expense',
+              onBackPressed: () => _onBackPressed(state),
             ),
+            body: Padding(
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 16.h),
+                  
+                  TextInput(
+                    title: 'Enter expense name',
+                    hintText: 'Name',
+                    controller: _expenseNameController,
+                    focusNode: _nameFocusNode,
+                    onChanged: () {
+                      context.read<AddExpenseCubit>().updateExpenseName(_expenseNameController.text);
+                    },
+                  ),
 
-            SizedBox(height: 12.h),
-            
-            // Expense Amount Section
-            PriceAmountInput(
-              title: 'Enter expense amount',
-              controller: _expenseAmountController,
-              focusNode: _amountFocusNode,
-              onChanged: () => setState(() {}),
-            ),
-            
-            SizedBox(height: 12.h),
-            
-            // Expense Type Section (only show if user has a goal)
-            if (_hasGoal) ...[
-              TransactionTypeSelector(
-                title: 'Type of expense',
-                selectedType: _selectedExpenseType,
-                onTypeChanged: (type) {
-                  setState(() {
-                    _selectedExpenseType = type;
-                  });
-                },
+                  SizedBox(height: 12.h),
+                  
+                  PriceAmountInput(
+                    title: 'Enter expense amount',
+                    controller: _expenseAmountController,
+                    focusNode: _amountFocusNode,
+                    onChanged: () => context.read<AddExpenseCubit>().updateExpenseAmount(_expenseAmountController.text),
+                  ),
+                  
+                  SizedBox(height: 12.h),
+                  
+                  if (state.hasGoal) ...[
+                    TransactionTypeSelector(
+                      title: 'Type of expense',
+                      selectedType: state.selectedExpenseType,
+                      onTypeChanged: (type) {
+                        context.read<AddExpenseCubit>().updateSelectedExpenseType(type);
+                      },
+                    ),
+                    SizedBox(height: 40.h),
+                  ],
+                  
+                  const Spacer(),
+                  
+                  AppButton(
+                    text: state.isLoading ? 'Saving...' : 'Save',
+                    onTap: (state.isFormValid && !state.isLoading) ? () => context.read<AddExpenseCubit>().saveExpense() : null,
+                    containerColor: (state.isFormValid && !state.isLoading) ? AppColors.green : AppColors.white,
+                    fontColor: (state.isFormValid && !state.isLoading) ? AppColors.blackLight : AppColors.gray,
+                    borderColor: (state.isFormValid && !state.isLoading) ? null : AppColors.gray,
+                    width: double.infinity,
+                    height: 60.h,
+                  ),
+                  
+                  SizedBox(height: 20.h),
+                ],
               ),
-              SizedBox(height: 40.h),
-            ],
-            
-            const Spacer(),
-            
-            // Save Button
-            AppButton(
-              text: _isLoading ? 'Saving...' : 'Save',
-              onTap: (_isFormValid && !_isLoading) ? _saveExpense : null,
-              containerColor: (_isFormValid && !_isLoading) ? AppColors.green : AppColors.white,
-              fontColor: (_isFormValid && !_isLoading) ? AppColors.blackLight : AppColors.gray,
-              borderColor: (_isFormValid && !_isLoading) ? null : AppColors.gray,
-              width: double.infinity,
-              height: 60.h,
             ),
-            
-            SizedBox(height: 20.h),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
