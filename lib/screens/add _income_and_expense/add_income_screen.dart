@@ -144,6 +144,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.white,
       appBar: CustomBackAppBar(
         title: 'Add Income',

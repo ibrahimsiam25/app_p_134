@@ -92,6 +92,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.white,
       appBar: CustomBackAppBar(
         title: 'Create a goal',

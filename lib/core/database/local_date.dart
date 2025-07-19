@@ -215,7 +215,27 @@ class LocalData {
       return false;
     }
   }
-
+// Delete all transactions where isFromCurrentGoal is true
+static Future<bool> clearTransactionsFromCurrentGoal() async {
+  try {
+    List<TransactionModel> currentTransactions = await getTransactions();
+    
+    // Filter out transactions where isFromCurrentGoal is true
+    List<TransactionModel> filteredTransactions = currentTransactions
+        .where((transaction) => !transaction.isFromCurrentGoal)
+        .toList();
+    
+    bool result = await saveTransactions(filteredTransactions);
+    
+    if (result) {
+      await notifyTransactionsChanged();
+    }
+    
+    return result;
+  } catch (e) {
+    return false; 
+  }
+}
   // Get total income amount
   static Future<double> getTotalIncome() async {
     try {

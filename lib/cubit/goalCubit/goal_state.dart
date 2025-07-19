@@ -40,10 +40,12 @@ class GoalFailedState extends GoalState {
   final GoalModel goal;
   final double currentAmount;
   final double progressPercentage;
+  final bool isFirstTimeFailure;
 
   const GoalFailedState({
     required this.goal,
     required this.currentAmount,
     required this.progressPercentage,
+    required this.isFirstTimeFailure,
   });
 }

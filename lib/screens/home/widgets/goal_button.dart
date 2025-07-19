@@ -32,6 +32,15 @@ class _GoalButtonState extends State<GoalButton> {
         });
       }
     }
+    // Show change goal dialog automatically if this is the first time failing the goal
+    else if (widget.state is GoalFailedState) {
+      final failedState = widget.state as GoalFailedState;
+      if (failedState.isFirstTimeFailure) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showChangeGoalDialog(context, failedState);
+        });
+      }
+    }
   }
 
   @override

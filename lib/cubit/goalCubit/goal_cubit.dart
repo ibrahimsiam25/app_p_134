@@ -61,10 +61,20 @@ class GoalCubit extends Cubit<GoalState> {
           isFirstTimeAchieved: isFirstTimeAchieved,
         ));
       } else if (isDeadlinePassed) {
+        // Check if this is the first time failure (goal hasn't shown failure dialog yet)
+        bool isFirstTimeFailure = !goal.hasShownFailureDialog;
+        
+        // If it's first time failed, update the goal to mark failure dialog as shown
+        if (isFirstTimeFailure) {
+          GoalModel updatedGoal = goal.copyWith(hasShownFailureDialog: true);
+          await LocalData.saveGoal(updatedGoal);
+        }
+        
         emit(GoalFailedState(
           goal: goal,
           currentAmount: currentAmount,
           progressPercentage: progressPercentage,
+          isFirstTimeFailure: isFirstTimeFailure,
         ));
       } else {
         emit(InProgressGoalState(
