@@ -2,6 +2,7 @@ import 'package:app_p_134/widgets/price_amount_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/database/local_date.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/custom_back_app_bar.dart';
 import 'widgets/deadline_section.dart';
@@ -83,7 +84,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
       selectedDate: _selectedDate,
       selectedTime: _selectedTime,
       isFormValid: _isFormValid,
-      onSuccess: () {
+      onSuccess: () async {
+          await LocalData.clearTransactionsFromCurrentGoal();
         Navigator.of(context).pop();
       },
     );

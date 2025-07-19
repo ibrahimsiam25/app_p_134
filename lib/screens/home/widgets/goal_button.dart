@@ -23,21 +23,28 @@ class _GoalButtonState extends State<GoalButton> {
   @override
   void didUpdateWidget(GoalButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Show success dialog automatically if this is the first time achieving the goal
     if (widget.state is GoalAchievedState) {
       final achievedState = widget.state as GoalAchievedState;
       if (achievedState.isFirstTimeAchieved) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _showSuccessDialog(context);
+          Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            _showSuccessDialog(context);
+          }
+        });
+      
         });
       }
     }
-    // Show change goal dialog automatically if this is the first time failing the goal
     else if (widget.state is GoalFailedState) {
       final failedState = widget.state as GoalFailedState;
       if (failedState.isFirstTimeFailure) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _showChangeGoalDialog(context, failedState);
+     Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            _showChangeGoalDialog(context, failedState);
+          }
+        });
         });
       }
     }
@@ -46,7 +53,6 @@ class _GoalButtonState extends State<GoalButton> {
   @override
   Widget build(BuildContext context) {
     if (widget.state is NoGoalState) {
-      // Show "Create a goal" button
       return _buildActionButton(
         context: context,
         text: 'Create a goal  ',
@@ -61,15 +67,14 @@ class _GoalButtonState extends State<GoalButton> {
         onTap: () => _showSuccessDialog(context),
       );
     } else if (widget.state is GoalFailedState) {
-      final failedState = widget.state as GoalFailedState; // Cast to GoalFailedState
-      // Show "Change a goal" button
+      final failedState = widget.state as GoalFailedState; 
+    
       return _buildActionButton(
         context: context,
         text: 'Change a goal',
         onTap: () => _showChangeGoalDialog(context, failedState),
       );
     } else {
-      // InProgressGoalState - hide the button
       return const SizedBox.shrink();
     }
   }
@@ -109,8 +114,9 @@ class _GoalButtonState extends State<GoalButton> {
   void _showSuccessDialog(BuildContext context) {
     SuccessDialog.show(
       context,
+   
       onCreateNew: () {
-            Navigator.of(context).pop();
+        Navigator.of(context).pop();
         Navigator.pushNamed(context, 'createGoalScreen');
       },
       onOk: () {
@@ -125,6 +131,7 @@ class _GoalButtonState extends State<GoalButton> {
         builder: (context) => CoustomDialog(
       onPrimary: () async {
         Navigator.pop(context);
+           await LocalData.clearTransactionsFromCurrentGoal();
            await LocalData.deleteCurrentGoal();
       },
       onSecondary: () {

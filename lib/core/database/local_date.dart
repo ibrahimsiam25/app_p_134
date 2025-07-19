@@ -8,122 +8,99 @@ class LocalData {
   static late SharedPreferences prefs;
   static const String _goalKey = 'current_goal';
   static const String _transactionsKey = 'transactions';
-  
-  // Stream controller for transactions changes
-  static final StreamController<List<TransactionModel>> _transactionsController = 
+
+  static final StreamController<List<TransactionModel>>
+      _transactionsController =
       StreamController<List<TransactionModel>>.broadcast();
-  
-  // Stream to listen to transactions changes
-  static Stream<List<TransactionModel>> get transactionsStream => _transactionsController.stream;
+
+  static Stream<List<TransactionModel>> get transactionsStream =>
+      _transactionsController.stream;
 
   static Future<void> initLocalService() async {
     prefs = await SharedPreferences.getInstance();
-    // Initialize stream with current data
+
     await notifyTransactionsChanged();
   }
 
-  // Notify listeners about transactions changes
   static Future<void> notifyTransactionsChanged() async {
     try {
       List<TransactionModel> transactions = await getTransactions();
- 
+
       _transactionsController.add(transactions);
     } catch (e) {
       // Handle error
     }
   }
 
-  // Dispose stream controller when no longer needed
   static void dispose() {
     _transactionsController.close();
   }
 
-  // Goal Management Methods
-  
-  // Save/Update the single goal (replaces any existing goal)
   static Future<bool> saveGoal(GoalModel goal) async {
     try {
       String goalJson = jsonEncode(goal.toJson());
-     
+
       return await prefs.setString(_goalKey, goalJson);
     } catch (e) {
-      
       return false;
     }
   }
 
-  // Get the current goal (returns null if no goal exists)
   static Future<GoalModel?> getCurrentGoal() async {
     try {
       String? goalJson = prefs.getString(_goalKey);
-      
+
       if (goalJson == null || goalJson.isEmpty) {
-       
         return null;
       }
 
       GoalModel goal = GoalModel.fromJson(jsonDecode(goalJson));
-    
+
       return goal;
     } catch (e) {
-      
       return null;
     }
   }
 
-  // Check if user has a goal
   static Future<bool> hasGoal() async {
     try {
       String? goalJson = prefs.getString(_goalKey);
       return goalJson != null && goalJson.isNotEmpty;
     } catch (e) {
-     
       return false;
     }
   }
 
-  // Delete the current goal
   static Future<bool> deleteCurrentGoal() async {
     try {
-     
       bool result = await prefs.remove(_goalKey);
-      
-      // Notify listeners about the change (empty transactions list)
+
       if (result) {
-      
         await notifyTransactionsChanged();
       }
-      
+
       return result;
     } catch (e) {
-   
       return false;
     }
   }
 
-
-
-
-  // Transaction Management Methods (Independent of Goals)
-  
-  // Save transactions list to storage
-  static Future<bool> saveTransactions(List<TransactionModel> transactions) async {
+  static Future<bool> saveTransactions(
+      List<TransactionModel> transactions) async {
     try {
-      List<Map<String, dynamic>> transactionsJson = 
+      List<Map<String, dynamic>> transactionsJson =
           transactions.map((transaction) => transaction.toJson()).toList();
       String transactionsString = jsonEncode(transactionsJson);
       return await prefs.setString(_transactionsKey, transactionsString);
     } catch (e) {
-   
       return false;
     }
   }
 
-  // Get all transactions from storage
   static Future<List<TransactionModel>> getTransactions() async {
     try {
       String? transactionsString = prefs.getString(_transactionsKey);
-      
+
       if (transactionsString == null || transactionsString.isEmpty) {
         return [];
       }
@@ -133,110 +110,102 @@ class LocalData {
           .map((json) => TransactionModel.fromJson(json))
           .toList();
     } catch (e) {
-   
       return [];
     }
   }
 
-  // Add transaction to storage
   static Future<bool> addTransaction(TransactionModel transaction) async {
     try {
-    
       List<TransactionModel> currentTransactions = await getTransactions();
       currentTransactions.add(transaction);
-      
+
       bool result = await saveTransactions(currentTransactions);
-      
+
       if (result) {
-      
         await notifyTransactionsChanged();
       }
-      
+
       return result;
     } catch (e) {
       return false;
     }
   }
 
-
-
-  // Update transaction in storage
-  static Future<bool> updateTransaction(TransactionModel updatedTransaction) async {
+  static Future<bool> updateTransaction(
+      TransactionModel updatedTransaction) async {
     try {
       List<TransactionModel> currentTransactions = await getTransactions();
-      
-      int index = currentTransactions.indexWhere((t) => t.id == updatedTransaction.id);
+
+      int index =
+          currentTransactions.indexWhere((t) => t.id == updatedTransaction.id);
       if (index != -1) {
         currentTransactions[index] = updatedTransaction;
         bool result = await saveTransactions(currentTransactions);
-        
+
         if (result) {
           await notifyTransactionsChanged();
         }
-        
+
         return result;
       }
-      
+
       return false;
     } catch (e) {
       return false;
     }
   }
 
-  // Remove transaction from storage
   static Future<bool> removeTransaction(String transactionId) async {
     try {
       List<TransactionModel> currentTransactions = await getTransactions();
-      
+
       currentTransactions.removeWhere((t) => t.id == transactionId);
       bool result = await saveTransactions(currentTransactions);
-      
+
       if (result) {
         await notifyTransactionsChanged();
       }
-      
+
       return result;
     } catch (e) {
       return false;
     }
   }
 
-  // Clear all transactions
   static Future<bool> clearAllTransactions() async {
     try {
       bool result = await prefs.remove(_transactionsKey);
-      
+
       if (result) {
         await notifyTransactionsChanged();
       }
-      
+
       return result;
     } catch (e) {
       return false;
     }
   }
-// Delete all transactions where isFromCurrentGoal is true
-static Future<bool> clearTransactionsFromCurrentGoal() async {
-  try {
-    List<TransactionModel> currentTransactions = await getTransactions();
-    
-    // Filter out transactions where isFromCurrentGoal is true
-    List<TransactionModel> filteredTransactions = currentTransactions
-        .where((transaction) => !transaction.isFromCurrentGoal)
-        .toList();
-    
-    bool result = await saveTransactions(filteredTransactions);
-    
-    if (result) {
-      await notifyTransactionsChanged();
+
+  static Future<bool> clearTransactionsFromCurrentGoal() async {
+    try {
+      List<TransactionModel> currentTransactions = await getTransactions();
+
+      List<TransactionModel> filteredTransactions = currentTransactions
+          .where((transaction) => !transaction.isFromCurrentGoal)
+          .toList();
+
+      bool result = await saveTransactions(filteredTransactions);
+
+      if (result) {
+        await notifyTransactionsChanged();
+      }
+
+      return result;
+    } catch (e) {
+      return false;
     }
-    
-    return result;
-  } catch (e) {
-    return false; 
   }
-}
-  // Get total income amount
+
   static Future<double> getTotalIncome() async {
     try {
       List<TransactionModel> transactions = await getTransactions();
@@ -251,13 +220,12 @@ static Future<bool> clearTransactionsFromCurrentGoal() async {
       return 0.0;
     }
   }
- 
-  // Get total expense amount
+
   static Future<double> getTotalExpense() async {
     try {
       List<TransactionModel> transactions = await getTransactions();
       double total = 0.0;
-      for (var transaction in transactions ) {  
+      for (var transaction in transactions) {
         if (transaction.isExpense && transaction.isFromCurrentGoal) {
           total += transaction.amount;
         }
@@ -268,7 +236,6 @@ static Future<bool> clearTransactionsFromCurrentGoal() async {
     }
   }
 
-  // Get current net amount (income - expense)
   static Future<double> getCurrentAmount() async {
     try {
       double totalIncome = await getTotalIncome();
@@ -279,18 +246,15 @@ static Future<bool> clearTransactionsFromCurrentGoal() async {
     }
   }
 
-
-  // Add income (using unified transaction model)
   static Future<bool> addIncome(TransactionModel income) async {
     return await addTransaction(income);
   }
 
-  // Add expense (using unified transaction model)
   static Future<bool> addExpense(TransactionModel expense) async {
     return await addTransaction(expense);
   }
-  static void deleteTransaction(String id)async {
-   await  removeTransaction(id);
+
+  static void deleteTransaction(String id) async {
+    await removeTransaction(id);
   }
 }
- 

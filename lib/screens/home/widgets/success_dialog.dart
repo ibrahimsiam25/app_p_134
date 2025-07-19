@@ -22,7 +22,7 @@ class SuccessDialog extends StatelessWidget {
   }) {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) => SuccessDialog(
         onCreateNew: onCreateNew,
         onOk: onOk,
