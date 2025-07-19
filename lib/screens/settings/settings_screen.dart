@@ -13,44 +13,10 @@ import 'package:share_plus/share_plus.dart';
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  void _showNotificationsSettings(BuildContext context) {
-    CustomSnackBar.show(
-      context,
-      message: 'Notification settings will be available soon!',
-    );
-  }
+  
 
-  void _showPrivacyPolicy(BuildContext context) {
-    CustomSnackBar.show(
-      context,
-      message: 'Privacy Policy will be displayed here',
-    );
-  }
 
-  void _shareApp(BuildContext context) async {
-    try {
-      await Share.share(
-        'Check out this amazing finance app!',
-        subject: 'Finance App Recommendation',
-      );
-    } catch (e) {
-      CustomSnackBar.show(
-        context,
-        message: 'Unable to share app',
-        isError: true,
-      );
-    }
-  }
-
-  void _rateApp(BuildContext context) async {
-    // For demonstration purposes, showing a snack bar
-    // In real app, you would open the app store
-    CustomSnackBar.show(
-      context,
-      message: 'Thank you for rating our app!',
-      isSuccess: true,
-    );
-  }
+  
 
   void _showClearDataDialog(BuildContext context) {
       showDialog(
@@ -120,22 +86,22 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   SettingCard(
                     title: 'Notifications',
-                    onTap: () => _showNotificationsSettings(context),
+                    onTap:() {}
                   ),
                   
                   SettingCard(
                     title: 'Privacy Policy',
-                    onTap: () => _showPrivacyPolicy(context),
+                    onTap: () {}
                   ),
                  
                   SettingCard(
                     title: 'Share App',
-                    onTap: () => _shareApp(context),
+                    onTap: () {}
                   ),
                  
                   SettingCard(
                     title: 'Rate Us',
-                    onTap: () => _rateApp(context),
+                    onTap: () {}
                   ),
                   
                   SettingCard(

@@ -20,9 +20,12 @@ class CustomBackAppBar extends StatelessWidget implements PreferredSizeWidget {
       
       scrolledUnderElevation: 0,
       foregroundColor: AppColors.blackLight,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: AppColors.blackLight),
-        onPressed: onBackPressed,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 30),
+        child: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.blackLight),
+          onPressed: onBackPressed,
+        ),
       ),
       title: Text(
         title,

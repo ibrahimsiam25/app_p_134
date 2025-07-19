@@ -26,7 +26,6 @@ class GoalButton extends StatelessWidget {
         },
       );
     } else if (state is GoalAchievedState) {
-      // Show "Create new goal" button
       return _buildActionButton(
         context: context,
         text: 'Create new goal',
@@ -82,10 +81,11 @@ class GoalButton extends StatelessWidget {
     SuccessDialog.show(
       context,
       onCreateNew: () {
+            Navigator.of(context).pop();
         Navigator.pushNamed(context, 'createGoalScreen');
       },
       onOk: () {
-        // Just dismiss the dialog
+           Navigator.of(context).pop();
       },
     );
   }

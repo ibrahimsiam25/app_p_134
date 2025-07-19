@@ -113,7 +113,7 @@ class SuccessDialog extends StatelessWidget {
                   child: AppButton(
                     text:  'Create new',
                     onTap:() {
-                      Navigator.of(context).pop();
+                    
                       onCreateNew?.call();
                     },
                     containerColor: AppColors.white,
@@ -127,7 +127,7 @@ class SuccessDialog extends StatelessWidget {
                   child: AppButton(
                     text: 'OK!',
                     onTap:  () {
-                      Navigator.of(context).pop();
+                  
                       onOk?.call();
                     },
                     containerColor: AppColors.green,
