@@ -17,19 +17,19 @@ class TransactionModel {
     this.isFromCurrentGoal = false,
   });
 
-  // Convert TransactionModel to Map for storage
+ 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
       'amount': amount,
       'date': date.millisecondsSinceEpoch,
-      'type': type.name, // Store as string
+      'type': type.name, 
       'isFromCurrentGoal': isFromCurrentGoal,
     };
   }
 
-  // Create TransactionModel from Map
+
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(
       id: json['id'],
@@ -44,7 +44,7 @@ class TransactionModel {
     );
   }
 
-  // Create a copy of TransactionModel with updated fields
+
   TransactionModel copyWith({
     String? id,
     String? name,
@@ -63,11 +63,11 @@ class TransactionModel {
     );
   }
 
-  // Convenience methods to check transaction type
+
   bool get isIncome => type == TransactionCategory.income;
   bool get isExpense => type == TransactionCategory.expense;
 
-  // Factory methods for creating specific types
+ 
   factory TransactionModel.income({
     required String id,
     required String name,
@@ -102,7 +102,6 @@ class TransactionModel {
     );
   }
 
-  // Factory methods for legacy data migration
   factory TransactionModel.fromIncome(Map<String, dynamic> json) {
     return TransactionModel(
       id: json['id'],

@@ -14,14 +14,26 @@ import 'widgets/deadline_section.dart';
 import 'widgets/create_goal_functions.dart';
 
 
-class CreateGoalScreen extends StatefulWidget {
+class CreateGoalScreen extends StatelessWidget {
   const CreateGoalScreen({super.key});
 
   @override
-  State<CreateGoalScreen> createState() => _CreateGoalScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => GoalFormCubit(),
+      child: const _CreateGoalScreenView(),
+    );
+  }
 }
 
-class _CreateGoalScreenState extends State<CreateGoalScreen> {
+class _CreateGoalScreenView extends StatefulWidget {
+  const _CreateGoalScreenView();
+
+  @override
+  State<_CreateGoalScreenView> createState() => _CreateGoalScreenViewState();
+}
+
+class _CreateGoalScreenViewState extends State<_CreateGoalScreenView> {
   final TextEditingController _goalAmountController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
@@ -32,24 +44,24 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     super.dispose();
   }
 
-  void _showDatePicker(BuildContext validContext,GoalFormState state) {
+  void _showDatePicker(BuildContext validContext, GoalFormState state) {
     CreateGoalFunctions.showDatePicker(
-  context: validContext,
+      context: validContext,
       selectedDate: state.selectedDate,
       onDateSelected: (DateTime? newDate) {
         if (newDate != null) {
-         validContext.read<GoalFormCubit>().updateSelectedDate(newDate);
+          validContext.read<GoalFormCubit>().updateSelectedDate(newDate);
         }
       },
     );
   }
 
-  void _showTimePicker(BuildContext validContext,) {
+  void _showTimePicker(BuildContext validContext) {
     CreateGoalFunctions.showTimePicker(
       context: validContext,
       selectedTime: validContext.read<GoalFormCubit>().state.selectedTime,
       onTimeSelected: (TimeOfDay newTime) {
-         validContext.read<GoalFormCubit>().updateSelectedTime(newTime);
+        validContext.read<GoalFormCubit>().updateSelectedTime(newTime);
       },
     );
   }
@@ -87,82 +99,79 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => GoalFormCubit(),
-      child: BlocConsumer<GoalFormCubit, GoalFormState>(
-        listener: (context, state) {
-          if (state is GoalFormSuccessState) {
-            CustomSnackBar.show(
-              context,
-              message: state.successMessage,
-              isSuccess: true,
-            );
-          } else if (state is GoalFormErrorState) {
-            CustomSnackBar.show(
-              context,
-              message: state.errorMessage,
-              isError: true,
-            );
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: AppColors.white,
-            appBar: CustomBackAppBar(
-              title: 'Create a goal',
-              onBackPressed: () => _onBackPressed(state),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(24.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        PriceAmountInput(
-                          title: 'Goal amount',
-                          controller: _goalAmountController,
-                          focusNode: _focusNode,
-                          onChanged: () {
-                            context.read<GoalFormCubit>().updateGoalAmount(_goalAmountController.text);
-                          },
-                        ),
-                        
-                        SizedBox(height: 32.h),
-                        
-                        DeadlineSection(
-                          isDeadlineSet: state.isDeadlineSet,
-                          selectedDate: state.selectedDate,
-                          selectedTime: state.selectedTime,
-                          onDeadlineChanged: (bool? value) {
-                            context.read<GoalFormCubit>().updateDeadlineSet(value ?? false);
-                          },
-                          onDateTap: () => _showDatePicker(context,state),
-                          onTimeTap: () => _showTimePicker(context),
-                        ),
-                        
-                        const Spacer(),
-                        
-                        AppButton(
-                          text: 'Save',
-                          onTap: state.isFormValid ? _saveGoal : null,
-                          containerColor: state.isFormValid ? AppColors.green : AppColors.white,
-                          fontColor: state.isFormValid ? AppColors.blackLight : AppColors.gray,
-                          borderColor: state.isFormValid ? null : AppColors.gray,
-                          width: double.infinity,
-                          height: 60.h,
-                        ),
-                      ],
-                    ),
+    return BlocConsumer<GoalFormCubit, GoalFormState>(
+      listener: (context, state) {
+        if (state is GoalFormSuccessState) {
+          CustomSnackBar.show(
+            context,
+            message: state.successMessage,
+            isSuccess: true,
+          );
+        } else if (state is GoalFormErrorState) {
+          CustomSnackBar.show(
+            context,
+            message: state.errorMessage,
+            isError: true,
+          );
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: AppColors.white,
+          appBar: CustomBackAppBar(
+            title: 'Create a goal',
+            onBackPressed: () => _onBackPressed(state),
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(24.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PriceAmountInput(
+                        title: 'Goal amount',
+                        controller: _goalAmountController,
+                        focusNode: _focusNode,
+                        onChanged: () {
+                          context.read<GoalFormCubit>().updateGoalAmount(_goalAmountController.text);
+                        },
+                      ),
+                      
+                      SizedBox(height: 32.h),
+                      
+                      DeadlineSection(
+                        isDeadlineSet: state.isDeadlineSet,
+                        selectedDate: state.selectedDate,
+                        selectedTime: state.selectedTime,
+                        onDeadlineChanged: (bool? value) {
+                          context.read<GoalFormCubit>().updateDeadlineSet(value ?? false);
+                        },
+                        onDateTap: () => _showDatePicker(context, state),
+                        onTimeTap: () => _showTimePicker(context),
+                      ),
+                      
+                      const Spacer(),
+                      
+                      AppButton(
+                        text: 'Save',
+                        onTap: state.isFormValid ? _saveGoal : null,
+                        containerColor: state.isFormValid ? AppColors.green : AppColors.white,
+                        fontColor: state.isFormValid ? AppColors.blackLight : AppColors.gray,
+                        borderColor: state.isFormValid ? null : AppColors.gray,
+                        width: double.infinity,
+                        height: 60.h,
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

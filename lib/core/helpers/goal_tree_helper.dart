@@ -1,7 +1,6 @@
 import '../constants/assets.dart';
 
 class GoalTreeHelper {
-  /// Returns the appropriate tree image asset based on progress percentage
   static String getTreeImageForPercent(double percent) {
     if (percent <= 0) {
       return Assets.imagesGoalNotAchieved;

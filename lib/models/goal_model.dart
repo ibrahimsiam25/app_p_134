@@ -17,25 +17,24 @@ class GoalModel {
     this.hasShownFailureDialog = false,
   });
 
-  // Calculate progress percentage based on current saved amount
+
   double calculateProgressPercentage(double currentAmount) {
     if (amount <= 0) return 0;
     double progress = (currentAmount / amount) * 100;
     return progress > 100 ? 100 : progress;
   }
 
-  // Calculate remaining amount needed to reach goal
+
   double calculateRemainingAmount(double currentAmount) {
     double remaining = amount - currentAmount;
     return remaining > 0 ? remaining : 0;
   }
 
-  // Check if goal is achieved based on current amount
+
   bool isAchievedWith(double currentAmount) {
     return currentAmount >= amount;
   }
 
-  // Convert GoalModel to Map for storage
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -48,7 +47,6 @@ class GoalModel {
     };
   }
 
-  // Create GoalModel from Map
   factory GoalModel.fromJson(Map<String, dynamic> json) {
     return GoalModel(
       id: json['id'],
@@ -63,7 +61,7 @@ class GoalModel {
     );
   }
 
-  // Create a copy of GoalModel with updated fields
+
   GoalModel copyWith({
     String? id,
     double? amount,
