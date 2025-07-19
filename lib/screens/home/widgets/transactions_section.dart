@@ -9,7 +9,7 @@ import '../../../models/transaction_model.dart';
 import 'dart:async';
 
 
-// تحديث TransactionsSection
+
 class TransactionsSection extends StatefulWidget {
   const TransactionsSection({super.key});
 
@@ -70,9 +70,9 @@ class _TransactionsSectionState extends State<TransactionsSection> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      // ارتفاع ديناميكي حسب المحتوى
+  
       constraints: BoxConstraints(
-        minHeight: MediaQuery.of(context).size.height * 0.4, // على الأقل 40% من الشاشة
+        minHeight: MediaQuery.of(context).size.height * 0.4, 
       ),
       decoration: const BoxDecoration(
         color: AppColors.white,
@@ -82,7 +82,7 @@ class _TransactionsSectionState extends State<TransactionsSection> {
         ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // ياخد المساحة اللي يحتاجها بس
+        mainAxisSize: MainAxisSize.min, 
         children: [
           // الـ header
           Padding(
@@ -123,7 +123,7 @@ class _TransactionsSectionState extends State<TransactionsSection> {
             ),
           ),
           
-          // محتوى الـ transactions - بدون Expanded أو SingleChildScrollView
+       
           Padding(
             padding: EdgeInsets.fromLTRB(26.w, 0, 26.w, 30.h),
             child: Column(

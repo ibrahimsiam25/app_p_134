@@ -79,14 +79,14 @@ Widget build(BuildContext context) {
     body: SingleChildScrollView(
       child: Column(
         children: [
-          // الجزء البنفسجي
+    
           Container(
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: AppColors.purpleGradient,
             ),
             child: SafeArea(
-              bottom: false, // مش هنحط safe area في الأسفل
+              bottom: false, 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -148,7 +148,7 @@ Widget build(BuildContext context) {
             ),
           ),
           
-          // Transactions Section - بدون scroll منفصل
+    
           const TransactionsSection(),
         ],
       ),

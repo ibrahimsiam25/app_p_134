@@ -13,7 +13,7 @@ class CreateGoalFunctions {
   static void showDatePicker({
   required BuildContext context,
   DateTime? selectedDate,
-  required Function(DateTime?) onDateSelected, // خلي الـ function تقبل null
+  required Function(DateTime?) onDateSelected, 
 }) async {
   DateTime now = DateTime.now();
   DateTime today = DateTime(now.year, now.month, now.day);
@@ -24,21 +24,21 @@ class CreateGoalFunctions {
     initialDate = today;
   }
   
-  DateTime? currentSelectedDate; // متغير لحفظ التاريخ المختار
+  DateTime? currentSelectedDate; 
   
   showCupertinoModalPopup(
     context: context,
     builder: (context) => DatePickerWidget(
       selectedDate: selectedDate,
       onDateSelected: (DateTime date) {
-        currentSelectedDate = date; // حفظ التاريخ المختار
+        currentSelectedDate = date; 
       },
       onCancel: () {
-        onDateSelected(null); // إرسال null عند الـ Cancel
+        onDateSelected(null); 
         Navigator.of(context).pop();
       },
       onDone: () {
-        // استخدام التاريخ المختار أو التاريخ الابتدائي
+    
         DateTime finalDate = currentSelectedDate ?? selectedDate ?? today;
         onDateSelected(finalDate);
         Navigator.of(context).pop();
@@ -52,18 +52,18 @@ class CreateGoalFunctions {
   TimeOfDay? selectedTime,
   required Function(TimeOfDay) onTimeSelected,
 }) async {
-  TimeOfDay? currentSelectedTime; // متغير لحفظ الوقت المختار
+  TimeOfDay? currentSelectedTime; 
   
   showCupertinoModalPopup(
     context: context,
     builder: (context) => TimePickerWidget(
       selectedTime: selectedTime,
       onTimeSelected: (TimeOfDay time) {
-        currentSelectedTime = time; // حفظ الوقت المختار
+        currentSelectedTime = time;
       },
       onCancel: () => Navigator.of(context).pop(),
       onDone: () {
-        // استخدام الوقت المختار أو الوقت الابتدائي
+        
         TimeOfDay finalTime = currentSelectedTime ?? selectedTime ?? TimeOfDay.now();
         onTimeSelected(finalTime);
         Navigator.of(context).pop();
