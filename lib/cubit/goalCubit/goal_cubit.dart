@@ -40,7 +40,7 @@ class GoalCubit extends Cubit<GoalState> {
       
       // Check if goal is achieved
       bool isAchieved = goal.isAchievedWith(currentAmount);
-      print("----------------------------${goal.deadline}"); 
+   
       // Check if goal is failed (deadline passed and not achieved)
       bool isDeadlinePassed = goal.deadline != null && 
                              DateTime.now().isAfter(goal.deadline!);
@@ -64,7 +64,6 @@ class GoalCubit extends Cubit<GoalState> {
         ));
       }
     } catch (e) {
-      print('Error updating goal state: $e');
       emit(const NoGoalState());
     }
   }

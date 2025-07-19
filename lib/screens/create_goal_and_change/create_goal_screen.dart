@@ -42,17 +42,20 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     super.dispose();
   }
 
-  void _showDatePicker() {
-    CreateGoalFunctions.showDatePicker(
-      context: context,
-      selectedDate: _selectedDate,
-      onDateSelected: (DateTime newDate) {
+ void _showDatePicker() {
+  CreateGoalFunctions.showDatePicker(
+    context: context,
+    selectedDate: _selectedDate,
+    onDateSelected: (DateTime? newDate) {  
+      if (newDate != null) {  
         setState(() {
           _selectedDate = newDate;
         });
-      },
-    );
-  }
+      }
+    
+    },
+  );
+}
 
   void _showTimePicker() {
     CreateGoalFunctions.showTimePicker(

@@ -26,10 +26,10 @@ class LocalData {
   static Future<void> notifyTransactionsChanged() async {
     try {
       List<TransactionModel> transactions = await getTransactions();
-      print('LocalData: Notifying ${transactions.length} transactions to stream');
+ 
       _transactionsController.add(transactions);
     } catch (e) {
-      print('Error notifying transactions changed: $e');
+      // Handle error
     }
   }
 
@@ -44,10 +44,10 @@ class LocalData {
   static Future<bool> saveGoal(GoalModel goal) async {
     try {
       String goalJson = jsonEncode(goal.toJson());
-      print("Saving goal: $goalJson");
+     
       return await prefs.setString(_goalKey, goalJson);
     } catch (e) {
-      print('Error saving goal: $e');
+      
       return false;
     }
   }
@@ -58,15 +58,15 @@ class LocalData {
       String? goalJson = prefs.getString(_goalKey);
       
       if (goalJson == null || goalJson.isEmpty) {
-        print("No goal found in storage");
+       
         return null;
       }
 
       GoalModel goal = GoalModel.fromJson(jsonDecode(goalJson));
-      print("Retrieved goal: ${goal.toString()}");
+    
       return goal;
     } catch (e) {
-      print('Error getting goal: $e');
+      
       return null;
     }
   }
@@ -77,7 +77,7 @@ class LocalData {
       String? goalJson = prefs.getString(_goalKey);
       return goalJson != null && goalJson.isNotEmpty;
     } catch (e) {
-      print('Error checking if goal exists: $e');
+     
       return false;
     }
   }
@@ -85,18 +85,18 @@ class LocalData {
   // Delete the current goal
   static Future<bool> deleteCurrentGoal() async {
     try {
-      print("LocalData: Deleting current goal from storage");
+     
       bool result = await prefs.remove(_goalKey);
       
       // Notify listeners about the change (empty transactions list)
       if (result) {
-        print("LocalData: Goal deleted successfully, notifying listeners");
+      
         await notifyTransactionsChanged();
       }
       
       return result;
     } catch (e) {
-      print('Error deleting goal: $e');
+   
       return false;
     }
   }
@@ -114,7 +114,7 @@ class LocalData {
       String transactionsString = jsonEncode(transactionsJson);
       return await prefs.setString(_transactionsKey, transactionsString);
     } catch (e) {
-      print('Error saving transactions: $e');
+   
       return false;
     }
   }
@@ -133,7 +133,7 @@ class LocalData {
           .map((json) => TransactionModel.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error getting transactions: $e');
+   
       return [];
     }
   }
@@ -141,20 +141,19 @@ class LocalData {
   // Add transaction to storage
   static Future<bool> addTransaction(TransactionModel transaction) async {
     try {
-      print('LocalData: Adding transaction: ${transaction.name} - ${transaction.amount}');
+    
       List<TransactionModel> currentTransactions = await getTransactions();
       currentTransactions.add(transaction);
       
       bool result = await saveTransactions(currentTransactions);
       
       if (result) {
-        print('LocalData: Transaction saved successfully, notifying listeners');
+      
         await notifyTransactionsChanged();
       }
       
       return result;
     } catch (e) {
-      print('Error adding transaction: $e');
       return false;
     }
   }
@@ -180,7 +179,6 @@ class LocalData {
       
       return false;
     } catch (e) {
-      print('Error updating transaction: $e');
       return false;
     }
   }
@@ -199,7 +197,6 @@ class LocalData {
       
       return result;
     } catch (e) {
-      print('Error removing transaction: $e');
       return false;
     }
   }
@@ -215,7 +212,6 @@ class LocalData {
       
       return result;
     } catch (e) {
-      print('Error clearing transactions: $e');
       return false;
     }
   }
@@ -232,7 +228,6 @@ class LocalData {
       }
       return total;
     } catch (e) {
-      print('Error calculating total income: $e');
       return 0.0;
     }
   }
@@ -249,7 +244,6 @@ class LocalData {
       }
       return total;
     } catch (e) {
-      print('Error calculating total expense: $e');
       return 0.0;
     }
   }
@@ -261,7 +255,6 @@ class LocalData {
       double totalExpense = await getTotalExpense();
       return totalIncome - totalExpense;
     } catch (e) {
-      print('Error calculating current amount: $e');
       return 0.0;
     }
   }
@@ -269,7 +262,6 @@ class LocalData {
 
   // Add income (using unified transaction model)
   static Future<bool> addIncome(TransactionModel income) async {
-    print('Adding income****: ${income.isFromCurrentGoal}');
     return await addTransaction(income);
   }
 

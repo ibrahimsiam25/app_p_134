@@ -10,66 +10,68 @@ import 'date_picker_widget.dart';
 import 'time_picker_widget.dart';
 
 class CreateGoalFunctions {
-  
-  // Show date picker modal
   static void showDatePicker({
-    required BuildContext context,
-    DateTime? selectedDate,
-    required Function(DateTime) onDateSelected,
-  }) async {
-    DateTime now = DateTime.now();
-    DateTime today = DateTime(now.year, now.month, now.day);
-    DateTime initialDate = selectedDate ?? today;
-    
-    // Ensure initial date is not before today
-    if (initialDate.isBefore(today)) {
-      initialDate = today;
-    }
-    
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) => DatePickerWidget(
-        selectedDate: selectedDate,
-        onDateSelected: onDateSelected,
-        onCancel: () => Navigator.of(context).pop(),
-        onDone: () {
-          Navigator.of(context).pop();
-        },
-      ),
-    );
+  required BuildContext context,
+  DateTime? selectedDate,
+  required Function(DateTime?) onDateSelected, // خلي الـ function تقبل null
+}) async {
+  DateTime now = DateTime.now();
+  DateTime today = DateTime(now.year, now.month, now.day);
+  DateTime initialDate = selectedDate ?? today;
+  
+  // Ensure initial date is not before today
+  if (initialDate.isBefore(today)) {
+    initialDate = today;
   }
+  
+  DateTime? currentSelectedDate; // متغير لحفظ التاريخ المختار
+  
+  showCupertinoModalPopup(
+    context: context,
+    builder: (context) => DatePickerWidget(
+      selectedDate: selectedDate,
+      onDateSelected: (DateTime date) {
+        currentSelectedDate = date; // حفظ التاريخ المختار
+      },
+      onCancel: () {
+        onDateSelected(null); // إرسال null عند الـ Cancel
+        Navigator.of(context).pop();
+      },
+      onDone: () {
+        // استخدام التاريخ المختار أو التاريخ الابتدائي
+        DateTime finalDate = currentSelectedDate ?? selectedDate ?? today;
+        onDateSelected(finalDate);
+        Navigator.of(context).pop();
+      },
+    ),
+  );
+}
 
-  // Show time picker modal
-  static void showTimePicker({
-    required BuildContext context,
-    TimeOfDay? selectedTime,
-    required Function(TimeOfDay) onTimeSelected,
-  }) async {
-    TimeOfDay initialTime = selectedTime ?? TimeOfDay.now();
-    DateTime initialDateTime = DateTime.now().copyWith(
-      hour: initialTime.hour,
-      minute: initialTime.minute,
-    );
-    
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) => TimePickerWidget(
-        selectedTime: selectedTime,
-        onTimeSelected: onTimeSelected,
-        onCancel: () => Navigator.of(context).pop(),
-        onDone: () {
-          // حفظ القيمة الافتراضية إذا لم يتم اختيار شيء
-          if (selectedTime == null) {
-            onTimeSelected(TimeOfDay(
-              hour: initialDateTime.hour,
-              minute: initialDateTime.minute,
-            ));
-          }
-          Navigator.of(context).pop();
-        },
-      ),
-    );
-  }
+ static void showTimePicker({
+  required BuildContext context,
+  TimeOfDay? selectedTime,
+  required Function(TimeOfDay) onTimeSelected,
+}) async {
+  TimeOfDay? currentSelectedTime; // متغير لحفظ الوقت المختار
+  
+  showCupertinoModalPopup(
+    context: context,
+    builder: (context) => TimePickerWidget(
+      selectedTime: selectedTime,
+      onTimeSelected: (TimeOfDay time) {
+        currentSelectedTime = time; // حفظ الوقت المختار
+      },
+      onCancel: () => Navigator.of(context).pop(),
+      onDone: () {
+        // استخدام الوقت المختار أو الوقت الابتدائي
+        TimeOfDay finalTime = currentSelectedTime ?? selectedTime ?? TimeOfDay.now();
+        onTimeSelected(finalTime);
+        Navigator.of(context).pop();
+      },
+    ),
+  );
+}
+
 
   // Show exit confirmation dialog
   static void showCoustomDialog({

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'settings_state.dart';
@@ -53,10 +52,7 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> shareApp() async {
     try {
-      await Share.share(
-        "https://appdynamiclinka.page.link/76UZ",
-        subject: 'Look what I made!',
-      );
+      
       emit(state.copyWith(status: SettingsStatus.appShared));
     } catch (e) {
       emit(state.copyWith(
